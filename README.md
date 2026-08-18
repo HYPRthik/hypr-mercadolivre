@@ -10,17 +10,18 @@ Nada é inventado: nenhum número aparece no dashboard sem estar no `DATA`.
 
 | Seção | Rota | Estado |
 |---|---|---|
-| Consolidado Geral | `consolidado` | 5 flights |
-| Campanhas Ativadas | `campanhas` | 5 flights |
-| Audiências | `audiencias` | 40 segmentos |
+| Consolidado Geral | `consolidado` | 6 flights |
+| Campanhas Ativadas | `campanhas` | 6 flights |
+| Audiências | `audiencias` | 47 segmentos |
 | Central de Criativos | `criativos` | pronta · aguardando peças |
 | Brand-Lift | `brandlift` | pronta · aguardando surveys |
 | Hub de Materiais | `materiais` | 6 pós-vendas (PDF no Drive) |
 
-Campanhas carregadas: Dia do Consumidor (PI 001/2026), Same Day (002), Copa do
-Mundo (003), 7.7 (004) e DDP Contextual (008). **Falta DDP + 8.8** — o resumo
-tem 6,5 MB e estoura o limite de transporte do MCP do Drive; precisa chegar
-como anexo direto.
+Todas as campanhas carregadas: Dia do Consumidor (PI 001/2026), Same Day (002),
+Copa do Mundo (003), 7.7 (004), DDP + 8.8 (005) e DDP Contextual (008).
+
+Falta só a **logo oficial do Mercado Livre** (`BRAND.logo` segue `null`, com um
+wordmark tipográfico provisório no lugar) e os **criativos**.
 
 Sem gate de e-mail e sem telemetria nesta versão (decisão do cliente). Para
 religar, reintroduzir `#email-gate` + `initGate/submitGate` e um Apps Script
@@ -89,9 +90,15 @@ pacing            = impr / impr_neg
   No caso agrupado, o `Total geral` fica na coluna de Estratégia, não na de
   Audiência; um parser que só procure na coluna de Audiência atravessa a tabela
   e invade o bloco de performance diária.
+- **Segunda tabela de audiências, só de vídeo**, à direita da de display, com
+  views completos e VTR. Quatro capabilities aparecem nas duas (Downloaded Apps,
+  OOH, Topics e CTV) — funda display e vídeo no mesmo registro de feature, senão
+  os cliques de display entram duas vezes. CTV só existe na tabela de vídeo.
+  Cuidado ao localizá-la: `viewable_100%_complete` também é coluna dos blocos
+  Ad Size e Daily, então ancore a busca entre `AUDIENCES` e `DAILY`.
 - **Tabelas extras não modeladas**, disponíveis se quiserem virar seção:
-  audiências de vídeo (7.7, Copa do Mundo, DDP Contextual), *Praça* com share
-  por região (Same Day), *Ad Size Performance* e *Daily Performance* (todas).
+  *Praça* com share por região (Same Day), *Ad Size Performance* e
+  *Daily Performance* (todas as campanhas).
 
 ## Como preencher
 

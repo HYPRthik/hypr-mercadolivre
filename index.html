@@ -224,7 +224,11 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .kcard.blue{border-color:rgba(126,139,245,.24)}
 .kcard.blue .kc-v{color:var(--ac2)}
 .kc-l{font-size:11px;color:var(--tm);margin-bottom:8px;font-weight:500;display:flex;align-items:center;gap:6px}
-.kc-v{font-family:'Urbanist',sans-serif;font-weight:800;font-size:28px;line-height:1;letter-spacing:-.6px;margin-bottom:5px}
+.kc-v{font-family:'Urbanist',sans-serif;font-weight:800;font-size:28px;line-height:1;letter-spacing:-.6px;
+  margin-bottom:5px;white-space:nowrap}
+/* valores longos (R$ 1.435.155) estouravam a largura do card e quebravam
+   entre o símbolo e o número */
+.kc-v.sm{font-size:22px;letter-spacing:-.4px}
 .kc-s{font-size:11px;color:var(--tm);line-height:1.4}
 .kc-badge{font-family:'Space Mono',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.6px;
   padding:2px 7px;border-radius:5px;background:var(--ac-soft2);color:var(--ac);border:1px solid var(--ac-hover)}
@@ -336,6 +340,10 @@ table.dt tr.tot td.l{color:var(--ac)}
   border:1px solid var(--ac-hover);border-radius:15px;padding:14px 16px;opacity:0;pointer-events:none;
   transition:opacity .15s;z-index:20;box-shadow:0 16px 40px rgba(0,0,0,.6)}
 .tl-dot:hover .tl-card,.tl-dot.active .tl-card,.tl-card:hover{opacity:1!important;pointer-events:auto!important}
+/* nas pontas o card centralizado sai da tela (e o body corta overflow-x),
+   então ancoramos para dentro */
+.tl-dot.edge-l .tl-card{left:0;transform:none}
+.tl-dot.edge-r .tl-card{left:auto;right:0;transform:none}
 .tl-card-t{font-family:'Urbanist',sans-serif;font-weight:800;font-size:14px;margin-bottom:10px;color:var(--t)}
 .tl-card-row{display:flex;justify-content:space-between;gap:16px;font-size:11px;padding:3px 0;border-bottom:1px solid var(--bd)}
 .tl-card-row:last-of-type{border:none}
@@ -564,6 +572,7 @@ const DATA = {
     {vert:"Territórios", camp:"Same Day", mes:"Junho", periodo:"16/06–21/06/2026", code:"002/2026", budget:99999.99, custo_ef:99999.99, custo_over:133864.98, cpm_neg:14.4, cpm_ef:10.76, rentab:0.253, impr:9296179, clicks:109181, ctr:0.01174472, cpc:0.91591019, impr_neg:6944444, pacing:1.1155, atualizado:"22/06/2026", video:true, creativeCamp:"Same Day", alcance:1718348, frequencia:5.41, v_budget:100000.08, v_cpcv_neg:0.36, v_cpcv_ef:0.24988713, v_views:400181, v_startviews:482490, v_clicks:489, v_vtr:0.82940786, v_rentab_cpcv:0.30586909, v_exposure:3335, v_custo_over:144065},
     {vert:"Evento", camp:"Copa do Mundo", mes:"Junho", periodo:"16/06–05/07/2026", code:"003/2026", budget:150000, custo_ef:150000, custo_over:271268.34, cpm_neg:14.4, cpm_ef:7.96, rentab:0.447, impr:18838079, clicks:254266, ctr:0.01349745, cpc:0.58993338, impr_neg:10416667, pacing:1.8085, atualizado:"04/07/2026", video:true, creativeCamp:"Copa do Mundo", v_budget:150000.12, v_cpcv_neg:0.36, v_cpcv_ef:0.16125248, v_views:930219, v_startviews:1014602, v_clicks:639, v_vtr:0.91683143, v_rentab_cpcv:0.55207645, v_exposure:7752, v_custo_over:334878.8},
     {vert:"Data Dupla", camp:"7.7", mes:"Junho", periodo:"26/06–07/07/2026", code:"004/2026", budget:150000, custo_ef:150000, custo_over:266223.8, cpm_neg:14.4, cpm_ef:8.11, rentab:0.4366, impr:18487764, clicks:224756, ctr:0.01215701, cpc:0.66739041, impr_neg:10416667, pacing:1.7748, atualizado:"28/06/2026", video:true, creativeCamp:"7.7", v_budget:150000.12, v_cpcv_neg:0.36, v_cpcv_ef:0.14856748, v_views:1009643, v_startviews:1082183, v_clicks:409, v_vtr:0.93296882, v_rentab_cpcv:0.58731255, v_exposure:8414, v_custo_over:363471.6},
+    {vert:"Data Dupla", camp:"DDP + 8.8", mes:"Julho", periodo:"21/07–09/08/2026", code:"005/2026", budget:130000, custo_ef:130000, custo_over:227854.41, cpm_neg:14.4, cpm_ef:8.22, rentab:0.4295, impr:15823223, clicks:207554, ctr:0.01311705, cpc:0.62634302, impr_neg:9027778, pacing:1.1685, atualizado:"10/08/2026", video:true, creativeCamp:"DDP + 8.8", v_budget:129999.96, v_cpcv_neg:0.36, v_cpcv_ef:0.15846793, v_views:820355, v_startviews:877895, v_clicks:241, v_vtr:0.93445685, v_rentab_cpcv:0.5598113, v_exposure:6836, v_custo_over:295327.88},
     {vert:"Data Comemorativa", camp:"DDP Contextual", mes:"Agosto", periodo:"04/08–09/08/2026", code:"008/2026", budget:200000, custo_ef:200000, custo_over:287587.54, cpm_neg:14.4, cpm_ef:10.01, rentab:0.3046, impr:19971357, clicks:203719, ctr:0.01020056, cpc:0.98174446, impr_neg:13888889, pacing:1.1061, atualizado:"10/08/2026", video:true, creativeCamp:"DDP Contextual", v_budget:74999.88, v_cpcv_neg:0.36, v_cpcv_ef:0.09520905, v_views:787739, v_startviews:851882, v_clicks:910, v_vtr:0.92470436, v_rentab_cpcv:0.73553042, v_exposure:6564, v_custo_over:283586.08},
   ],
 
@@ -574,18 +583,22 @@ const DATA = {
      segmentos que também são capability aparecem aqui e em audiences[]
      sem dupla contagem.                                              */
   features: [
-    {feat:"Attention Ad", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:124117, clicks:2575, ctr:0.0207, plays:null, obs:""},
-    {feat:"Downloaded Apps", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:290330, clicks:5556, ctr:0.0191, plays:null, obs:""},
-    {feat:"Downloaded Apps", vert:"Territórios", camp:"Same Day", code:"002/2026", vi:1415391, clicks:19240, ctr:0.0136, plays:null, obs:""},
-    {feat:"Downloaded Apps", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:1638652, clicks:29734, ctr:0.0181, plays:null, obs:""},
-    {feat:"OOH", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:9758906, clicks:137990, ctr:0.0141, plays:null, obs:""},
-    {feat:"Topics", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:1131587, clicks:20948, ctr:0.0185, plays:null, obs:""},
-    {feat:"Downloaded Apps", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:826761, clicks:21903, ctr:0.0265, plays:null, obs:""},
-    {feat:"OOH", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:9463815, clicks:95103, ctr:0.01, plays:null, obs:""},
-    {feat:"Topics Concorrentes", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:274410, clicks:6164, ctr:0.0225, plays:null, obs:""},
-    {feat:"Tap-to-Cube", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:2686518, clicks:11044, ctr:0.0041, plays:null, obs:""},
-    {feat:"Downloaded Apps", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:3330551, clicks:15674, ctr:0.0047, plays:null, obs:""},
-    {feat:"Tap-to-Carousel", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:2219571, clicks:4526, ctr:0.002, plays:null, obs:""},
+    {feat:"Attention Ad", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:124117, clicks:2575, ctr:0.0207, plays:null, views:null, v_clicks:null, vtr:null, obs:""},
+    {feat:"Downloaded Apps", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:290330, clicks:5556, ctr:0.0191, plays:null, views:null, v_clicks:null, vtr:null, obs:""},
+    {feat:"Downloaded Apps", vert:"Territórios", camp:"Same Day", code:"002/2026", vi:1415391, clicks:19240, ctr:0.0136, plays:null, views:null, v_clicks:null, vtr:null, obs:""},
+    {feat:"Downloaded Apps", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:1638652, clicks:29734, ctr:0.0181, plays:null, views:null, v_clicks:null, vtr:null, obs:""},
+    {feat:"OOH", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:9758906, clicks:137990, ctr:0.0141, plays:null, views:281409, v_clicks:null, vtr:0.9099, obs:""},
+    {feat:"Topics", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:1131587, clicks:20948, ctr:0.0185, plays:null, views:null, v_clicks:null, vtr:null, obs:""},
+    {feat:"CTV", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:null, clicks:null, ctr:null, plays:null, views:377296, v_clicks:null, vtr:0.9361, obs:""},
+    {feat:"Downloaded Apps", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:826761, clicks:21903, ctr:0.0265, plays:null, views:50152, v_clicks:13, vtr:0.9394, obs:""},
+    {feat:"OOH", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:9463815, clicks:95103, ctr:0.01, plays:null, views:528158, v_clicks:301, vtr:0.9338, obs:""},
+    {feat:"Topics Concorrentes", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:274410, clicks:6164, ctr:0.0225, plays:null, views:null, v_clicks:null, vtr:null, obs:""},
+    {feat:"CTV", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:null, clicks:null, ctr:null, plays:null, views:141314, v_clicks:19, vtr:0.9226, obs:""},
+    {feat:"Downloaded Apps", vert:"Data Dupla", camp:"DDP + 8.8", code:"005/2026", vi:2919945, clicks:42532, ctr:0.0146, plays:null, views:178771, v_clicks:31, vtr:0.9395, obs:""},
+    {feat:"Topics", vert:"Data Dupla", camp:"DDP + 8.8", code:"005/2026", vi:3038903, clicks:34770, ctr:0.0114, plays:null, views:166922, v_clicks:66, vtr:0.9443, obs:""},
+    {feat:"Tap-to-Cube", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:2686518, clicks:11044, ctr:0.0041, plays:null, views:null, v_clicks:null, vtr:null, obs:""},
+    {feat:"Downloaded Apps", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:3330551, clicks:15674, ctr:0.0047, plays:null, views:27289, v_clicks:150, vtr:0.9045, obs:""},
+    {feat:"Tap-to-Carousel", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:2219571, clicks:4526, ctr:0.002, plays:null, views:null, v_clicks:null, vtr:null, obs:""},
   ],
 
   /* audiences[] — segmentos entregues (bloco AUDIENCES do resumo).
@@ -621,6 +634,13 @@ const DATA = {
     {aud:"OOH", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:9463815, clicks:95103, ctr:0.01, obs:""},
     {aud:"Tecnologia", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:1307220, clicks:15251, ctr:0.0117, obs:""},
     {aud:"Topics Concorrentes", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:274410, clicks:6164, ctr:0.0225, obs:""},
+    {aud:"Shoppings", vert:"Data Dupla", camp:"DDP + 8.8", code:"005/2026", vi:3608365, clicks:44994, ctr:0.0125, obs:""},
+    {aud:"Downloaded Apps", vert:"Data Dupla", camp:"DDP + 8.8", code:"005/2026", vi:2919945, clicks:42532, ctr:0.0146, obs:""},
+    {aud:"Shows & Festivais", vert:"Data Dupla", camp:"DDP + 8.8", code:"005/2026", vi:3577357, clicks:40693, ctr:0.0114, obs:""},
+    {aud:"Topics", vert:"Data Dupla", camp:"DDP + 8.8", code:"005/2026", vi:3038903, clicks:34770, ctr:0.0114, obs:""},
+    {aud:"Harry Styles", vert:"Data Dupla", camp:"DDP + 8.8", code:"005/2026", vi:1606970, clicks:25471, ctr:0.0159, obs:""},
+    {aud:"Pais", vert:"Data Dupla", camp:"DDP + 8.8", code:"005/2026", vi:810519, clicks:16884, ctr:0.0208, obs:""},
+    {aud:"João Rock", vert:"Data Dupla", camp:"DDP + 8.8", code:"005/2026", vi:261164, clicks:2210, ctr:0.0085, obs:""},
     {aud:"DDP", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1318530, clicks:23595, ctr:0.0179, estrategia:"Contextual", obs:""},
     {aud:"Eletrônicos", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1293244, clicks:22050, ctr:0.0171, estrategia:"Contextual", obs:""},
     {aud:"Esportes", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1287288, clicks:22825, ctr:0.0177, estrategia:"Contextual", obs:""},
@@ -670,14 +690,16 @@ const DATA = {
   inconsistencias: [
     ["Vídeo ativado sem entrega","Dia do Consumidor",
      "O resumo traz o bloco VIDEO PERFORMANCE preenchido com zeros (budget, views e start views = 0) e as taxas derivadas saem inválidas — VTR aparece como #DIV/0! e a rentabilidade do CPCV como 100%. O flight foi marcado como display-only e nenhum desses números entra no consolidado."],
-    ["Segmento que também é feature","Downloaded Apps · OOH · Topics · Attention Ad · Tap-to-Cube · Tap-to-Carousel",
+    ["Segmento que também é feature","Downloaded Apps · OOH · Topics · CTV · Attention Ad · Tap-to-Cube · Tap-to-Carousel",
      "No resumo do ML, as capabilities e formatos da HYPR aparecem dentro do bloco AUDIENCES, junto com os segmentos de categoria — e a soma das audiências fecha exatamente com a entrega total de cada campanha. Mantivemos todos em Audiências para preservar essa partição e repetimos as capabilities em Features, que é recorte da entrega e não soma ao portfólio. Não há dupla contagem."],
     ["Audiências agrupadas por estratégia","DDP Contextual",
      "É a única campanha em que o bloco AUDIENCES vem dividido em três estratégias (Contextual, Downloaded Apps e O2O), com subtotais próprios. Os mesmos segmentos — Eletrônicos, Esportes, Moda e Perfumaria — aparecem em duas estratégias diferentes, por isso o card e a tabela exibem a estratégia junto do nome. Somados, os três blocos fecham nas 19.971.357 impressões da campanha."],
     ["Colunas de audiência variam por relatório","Dia do Consumidor · Same Day",
      "O quinto campo do bloco AUDIENCES muda de significado entre os resumos: em Dia do Consumidor é o custo efetivo por segmento, em Same Day é a VTR, e nas demais campanhas vem vazio. O dashboard só exibe a coluna quando o dado existe."],
-    ["Alcance e frequência ausentes","7.7 · Copa do Mundo · DDP Contextual",
-     "Os campos Alcance (D-1) e Frequência (D-1) vêm em branco nesses três resumos. Os KPIs correspondentes simplesmente não aparecem no detalhe dessas campanhas, em vez de exibirem zero."],
+    ["Alcance e frequência ausentes","7.7 · Copa do Mundo · DDP + 8.8 · DDP Contextual",
+     "Os campos Alcance (D-1) e Frequência (D-1) vêm em branco nesses quatro resumos. Os KPIs correspondentes simplesmente não aparecem no detalhe dessas campanhas, em vez de exibirem zero."],
+    ["Features com entrega em vídeo","CTV · Downloaded Apps · OOH · Topics",
+     "Cada resumo traz uma segunda tabela de audiências só para vídeo, com views completos e VTR. Quatro capabilities aparecem nas duas tabelas — o registro da feature funde display e vídeo em vez de empilhar, senão os cliques de display seriam contados duas vezes. O CTV existe apenas na tabela de vídeo (7.7 e Copa do Mundo), por isso não exibe impressões nem CTR."],
     ["Blocos não ativados","RMN · Google Analytics · PDOOH",
      "Os três blocos vêm zerados em todos os resumos (e o RMN traz um período herdado do template, que não corresponde às campanhas). Nenhum deles é exibido no dashboard."],
   ],
@@ -937,7 +959,8 @@ function buildTimeline(F){
   const total = F.length - 1;
   const dots = F.map((f,i)=>{
     const pct = total > 0 ? (i/total)*100 : 50;
-    return `<div class="tl-dot" style="left:${pct}%" data-tl="${esc(f.code)}">
+    const borda = i===0 ? ' edge-l' : (i===total ? ' edge-r' : '');
+    return `<div class="tl-dot${borda}" style="left:${pct}%" data-tl="${esc(f.code)}">
       <div class="tl-card" style="bottom:calc(100% + 4px);top:auto">
         <div class="tl-card-t">${esc(f.camp)}</div>
         <div class="tl-card-row"><span class="k">Mês</span><span class="v">${esc(f.mes)}</span></div>
@@ -992,16 +1015,24 @@ function buildFeatCards(){
   const map = {};
   DATA.features.forEach(f=>{
     const key = f.feat;
-    if(!map[key]) map[key] = {feat:key, camps:[], vi:0, clicks:0, ctr_sum:0, ctr_n:0, plays:0};
+    if(!map[key]) map[key] = {feat:key, camps:[], vi:0, clicks:0, plays:0,
+                              views:0, v_clicks:0, vtr_pond:0};
     map[key].camps.push(f.camp);
-    if(f.vi)     map[key].vi     += f.vi;
-    if(f.clicks) map[key].clicks += f.clicks;
-    if(f.ctr){   map[key].ctr_sum += f.ctr; map[key].ctr_n++; }
-    if(f.plays)  map[key].plays  += f.plays;
+    if(f.vi)       map[key].vi       += f.vi;
+    if(f.clicks)   map[key].clicks   += f.clicks;
+    if(f.plays)    map[key].plays    += f.plays;
+    if(f.views)    map[key].views    += f.views;
+    if(f.v_clicks) map[key].v_clicks += f.v_clicks;
+    /* VTR consolidada ponderada por views completos — média simples
+       distorceria entre campanhas de tamanhos muito diferentes */
+    if(f.vtr && f.views) map[key].vtr_pond += f.vtr * f.views;
     if(f.feat==='Survey') map[key].isSurvey = true;
   });
   return Object.values(map).map(g=>{
     const campSet = [...new Set(g.camps)];
+    /* CTR derivado dos absolutos, não média de CTRs */
+    const ctr = g.vi ? g.clicks / g.vi : null;
+    const vtr = g.views ? g.vtr_pond / g.views : null;
     const surveyBtn = g.isSurvey
       ? `<button class="matcard-btn" style="margin-top:10px;width:100%" onclick="go('brandlift')">Ver resultados de Survey →</button>` : '';
     return `<div class="featcard reveal" style="padding:18px;display:flex;flex-direction:column">
@@ -1009,8 +1040,10 @@ function buildFeatCards(){
       <div style="font-size:12px;color:var(--ac);font-weight:600;margin-bottom:10px">${plural(campSet.length,'campanha','campanhas')}</div>
       ${g.vi?`<div class="featcard-row"><span class="k">Impressões</span><span class="v">${fmtInt(g.vi)}</span></div>`:''}
       ${g.clicks?`<div class="featcard-row"><span class="k">Cliques</span><span class="v">${fmtInt(g.clicks)}</span></div>`:''}
-      ${g.ctr_n?`<div class="featcard-row"><span class="k">CTR</span><span class="v">${fmtPct(g.ctr_sum/g.ctr_n)}</span></div>`:''}
+      ${ctr?`<div class="featcard-row"><span class="k">CTR</span><span class="v">${fmtPct(ctr)}</span></div>`:''}
       ${g.plays?`<div class="featcard-row"><span class="k">Plays PDOOH</span><span class="v">${fmtInt(g.plays)}</span></div>`:''}
+      ${g.views?`<div class="featcard-row"><span class="k">Views 100%</span><span class="v">${fmtInt(g.views)}</span></div>`:''}
+      ${vtr?`<div class="featcard-row"><span class="k">VTR</span><span class="v">${fmtPct(vtr)}</span></div>`:''}
       ${surveyBtn}
     </div>`;
   }).join('');
@@ -1050,7 +1083,9 @@ function buildConsolidado(){
       s:`CPCV efetivo ${fmtBRL(t.v_cpcv_ef)} vs. ${fmtBRL(CFG.cpcvNegPadrao)} contratado`});
 
   const renderKpis = arr => arr.map((k,i)=>`<div class="kcard reveal ${k.imp?'imp':''}" style="transition-delay:${i*45}ms">
-    <div class="kc-l">${k.l}</div><div class="kc-v urb">${k.v}</div><div class="kc-s">${k.s||''}</div></div>`).join('');
+    <div class="kc-l">${k.l}</div>
+    <div class="kc-v urb${String(k.v).length>11?' sm':''}">${k.v}</div>
+    <div class="kc-s">${k.s||''}</div></div>`).join('');
 
   let kg = `<div class="filter-lbl" style="margin:18px 0 9px">Display</div>
     <div class="kgrid">${renderKpis(kpisDisplay)}</div>`;
@@ -1213,15 +1248,19 @@ function buildFlightDetail(code){
                  s:`vs. ${fmtBRL(f.v_cpcv_neg)} contratado`});
   }
   const kg = kpis.map((k,i)=>`<div class="kcard reveal ${k.imp?'imp':''}${k.blue?' blue':''}" style="transition-delay:${i*40}ms">
-    <div class="kc-l">${k.l}</div><div class="kc-v urb">${k.v}</div>
+    <div class="kc-l">${k.l}</div>
+    <div class="kc-v urb${String(k.v).length>11?' sm':''}">${k.v}</div>
     ${k.s?`<div class="kc-s">${k.s}</div>`:''}</div>`).join('');
 
   const featHtml = feats.length ? feats.map(ft=>{
     let rows = "";
-    if(ft.vi!=null)     rows += `<div class="featcard-row"><span class="k">Impr. visíveis</span><span class="v">${fmtInt(ft.vi)}</span></div>`;
-    if(ft.clicks!=null) rows += `<div class="featcard-row"><span class="k">Cliques</span><span class="v">${fmtInt(ft.clicks)}</span></div>`;
-    if(ft.ctr!=null)    rows += `<div class="featcard-row"><span class="k">CTR</span><span class="v">${fmtPct(ft.ctr)}</span></div>`;
-    if(ft.plays!=null)  rows += `<div class="featcard-row"><span class="k">Plays (PDOOH)</span><span class="v">${fmtInt(ft.plays)}</span></div>`;
+    if(ft.vi!=null)       rows += `<div class="featcard-row"><span class="k">Impr. visíveis</span><span class="v">${fmtInt(ft.vi)}</span></div>`;
+    if(ft.clicks!=null)   rows += `<div class="featcard-row"><span class="k">Cliques</span><span class="v">${fmtInt(ft.clicks)}</span></div>`;
+    if(ft.ctr!=null)      rows += `<div class="featcard-row"><span class="k">CTR</span><span class="v">${fmtPct(ft.ctr)}</span></div>`;
+    if(ft.plays!=null)    rows += `<div class="featcard-row"><span class="k">Plays (PDOOH)</span><span class="v">${fmtInt(ft.plays)}</span></div>`;
+    if(ft.views!=null)    rows += `<div class="featcard-row"><span class="k">Views 100%</span><span class="v">${fmtInt(ft.views)}</span></div>`;
+    if(ft.v_clicks!=null) rows += `<div class="featcard-row"><span class="k">Cliques (vídeo)</span><span class="v">${fmtInt(ft.v_clicks)}</span></div>`;
+    if(ft.vtr!=null)      rows += `<div class="featcard-row"><span class="k">VTR</span><span class="v">${fmtPct(ft.vtr)}</span></div>`;
     return `<div class="featcard"><div class="featcard-n">${esc(ft.feat)}</div>${rows}
       ${ft.obs?`<div class="featcard-obs">${esc(ft.obs)}</div>`:''}</div>`;
   }).join('') : `<div class="note">Nenhuma feature registrada para este flight.</div>`;
