@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mercado Livre × HYPR · Consolidado de Campanhas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&family=Urbanist:wght@300;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ============================================================
+   MERCADO LIVRE × HYPR — Consolidado de Campanhas
+   Arquivo único. Sem build, sem backend, sem dependência de rede
+   além das fontes e do Chart.js.
+   Toda a UI é derivada do objeto DATA (ver <script> no fim).
+   ============================================================ */
+:root{
+  --bg:#08080F; --bg2:#0E0E1A;
+  --glass:rgba(255,255,255,.04); --glass2:rgba(255,255,255,.07); --glass3:rgba(255,255,255,.10);
+  --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.14);
+  --t:rgba(255,255,255,.92); --tm:rgba(255,255,255,.46); --tdim:rgba(255,255,255,.28);
+
+  /* ---- Mercado Livre ---- */
+  --ac:#FFE600;            /* amarelo institucional */
+  --ac-l:#FFF25C;          /* amarelo suave (texto sobre fundo escuro) */
+  --ac-d:#D9C400;
+  --on-ac:#12121C;         /* tinta sobre superfície amarela */
+  --ac-hover:rgba(255,230,0,.38); --ac-soft:rgba(255,230,0,.07); --ac-soft2:rgba(255,230,0,.14);
+  --ac2:#7E8BF5;           /* azul ML clareado — dado "importante" */
+  --blue:#2D3277;          /* azul institucional (superfícies/gradientes) */
+  --blue-l:#4A54B8;
+
+  --pos:#4FE3A0; --neg:rgba(255,255,255,.40);
+  --grad-ac:linear-gradient(135deg,#FFE600,#FFC800);
+  --grad-blue:linear-gradient(135deg,var(--blue-l),var(--blue));
+  --blur:20px; --blur-s:12px;
+  --maxw:1280px;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+h1,h2,h3{font-weight:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+img{display:block;max-width:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t);
+  -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+.mono{font-family:'Space Mono',monospace}
+.urb{font-family:'Urbanist',sans-serif}
+a{color:inherit}
+
+/* ---- fundo ambiente: blobs de cor + malha ---- */
+body::before{content:'';position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(760px 520px at 82% -6%, rgba(255,230,0,.10), transparent 62%),
+    radial-gradient(680px 560px at 8% 8%, rgba(45,50,119,.42), transparent 58%),
+    radial-gradient(720px 620px at 50% 108%, rgba(74,84,184,.16), transparent 60%),
+    var(--bg);}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.045;
+  background-image:linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px);
+  background-size:58px 58px;
+  -webkit-mask-image:radial-gradient(72% 62% at 50% 12%, #000 0%, transparent 78%);
+  mask-image:radial-gradient(72% 62% at 50% 12%, #000 0%, transparent 78%);}
+
+/* ============ TOP BAR ============ */
+.topbar{position:sticky;top:0;z-index:900;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:13px 22px;background:rgba(8,8,15,.72);backdrop-filter:blur(var(--blur));
+  border-bottom:1px solid var(--bd);}
+.tb-l{display:flex;align-items:center;gap:13px;min-width:0;background:none;text-align:left}
+.tb-sep{width:1px;height:20px;background:var(--bd2)}
+.tb-x{font-family:'Space Mono',monospace;font-size:11px;color:var(--tm);letter-spacing:.5px}
+.tb-hypr{height:15px;width:auto;opacity:.92}
+.tb-tag{font-family:'Space Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;
+  color:var(--tm);border:1px solid var(--bd);border-radius:6px;padding:3px 8px;white-space:nowrap}
+.tb-r{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tb-home{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tm);border:1px solid var(--bd);
+  border-radius:8px;padding:6px 12px;transition:.2s;background:var(--glass)}
+.tb-home:hover{color:var(--t);border-color:var(--ac-hover);background:var(--ac-soft)}
+
+/* ---- marca Mercado Livre ----
+   PROVISÓRIO: wordmark tipográfico enquanto o arquivo oficial da logo
+   não chega. Trocar `BRAND.logo` no <script> por um data: URI e este
+   bloco deixa de ser usado.                                          */
+.mlmark{display:flex;align-items:center;gap:9px}
+.mlmark-badge{width:30px;height:22px;border-radius:999px;background:var(--grad-ac);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-family:'Urbanist',sans-serif;font-weight:900;font-size:10px;letter-spacing:-.3px;color:var(--on-ac)}
+.mlmark-word{font-family:'Urbanist',sans-serif;font-weight:700;font-size:15px;letter-spacing:-.4px;
+  line-height:1;color:#fff;white-space:nowrap}
+.mlmark.lg .mlmark-badge{width:74px;height:54px;font-size:24px;border-radius:999px}
+.mlmark.lg .mlmark-word{font-size:38px;letter-spacing:-1.4px}
+.tb-logo{height:26px;width:auto;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4))}
+
+/* ============ VIEWS ============ */
+.view{display:none;animation:fade .4s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+
+/* ---- reveal on scroll (inspirado no one-pager HYPR × Monks) ---- */
+.reveal{opacity:0;transform:translateY(22px);
+  transition:opacity .75s var(--ease), transform .75s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ HUB ============ */
+#hub.active{min-height:calc(100vh - 51px);display:flex;flex-direction:column}
+.hub-hero{position:relative;padding:70px 22px 26px;display:flex;flex-direction:column;align-items:center;
+  text-align:center;overflow:hidden}
+.hero-blobs{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.blob{position:absolute;border-radius:50%;filter:blur(130px)}
+.blob.b1{top:-320px;left:50%;transform:translateX(-50%);width:840px;height:840px;background:rgba(255,230,0,.16);
+  animation:floatSlow 16s ease-in-out infinite}
+.blob.b2{top:-40px;left:-220px;width:480px;height:480px;background:rgba(45,50,119,.55)}
+.blob.b3{top:60px;right:-190px;width:520px;height:520px;background:rgba(74,84,184,.28)}
+@keyframes floatSlow{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(26px)}}
+.hub-hero > *:not(.hero-blobs){position:relative;z-index:1}
+
+.eyebrow-chip{display:inline-flex;align-items:center;gap:9px;border-radius:999px;border:1px solid var(--bd2);
+  background:var(--glass);padding:6px 16px;font-family:'Space Mono',monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:2.2px;color:var(--t);margin-bottom:22px;
+  opacity:0;animation:rise .7s .1s forwards}
+.eyebrow-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--ac);
+  box-shadow:0 0 10px rgba(255,230,0,.8);animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.32}}
+
+.hub-title{font-family:'Urbanist',sans-serif;font-weight:300;letter-spacing:-1.8px;line-height:1.02;
+  font-size:clamp(34px,6vw,74px);max-width:16ch;margin-bottom:16px;opacity:0;animation:rise .7s .2s forwards}
+.hub-title em{font-style:normal;
+  background:linear-gradient(120deg,var(--ac-l),var(--ac) 55%,#FFB800);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hub-sub{font-size:15.5px;color:var(--tm);max-width:56ch;line-height:1.65;opacity:0;animation:rise .7s .3s forwards}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+.stage{position:relative;width:100%;max-width:880px;margin:34px auto 6px;
+  display:flex;align-items:center;justify-content:center;opacity:0;animation:rise .8s .38s forwards}
+.stage-logo{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;gap:14px;
+  padding:26px 44px}
+.stage-logo img{height:96px;width:auto;filter:drop-shadow(0 0 34px rgba(255,230,0,.28)) drop-shadow(0 6px 18px rgba(0,0,0,.55))}
+.stage-logo .x{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2.4px;color:var(--tm);text-transform:uppercase}
+
+/* ---- marquee de capabilities ---- */
+.marquee{position:relative;overflow:hidden;padding:28px 0 6px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 16%,#000 84%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 16%,#000 84%,transparent)}
+.marquee-track{display:flex;gap:44px;width:max-content;animation:marquee 38s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-item{font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:1.6px;
+  color:var(--tdim);white-space:nowrap;display:flex;align-items:center;gap:44px}
+.marquee-item::after{content:'';width:4px;height:4px;border-radius:50%;background:var(--ac);opacity:.45}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* big numbers */
+.bignums{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:18px auto 6px;max-width:var(--maxw);}
+.bn{min-width:0;background:var(--glass);border:1px solid var(--bd);border-radius:18px;padding:18px 16px;
+  position:relative;overflow:hidden;transition:.25s;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.bn:hover{border-color:var(--ac-hover);background:var(--ac-soft);transform:translateY(-2px)}
+.bn::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;
+  background:var(--grad-ac);opacity:0;transition:.25s}
+.bn:hover::before{opacity:1}
+.bn-v{font-family:'Urbanist',sans-serif;font-weight:800;font-size:clamp(22px,2.4vw,30px);line-height:1;
+  letter-spacing:-.5px;margin-bottom:6px}
+.bn-v.pend{color:var(--tdim);font-weight:300}
+.bn-l{font-size:12px;font-weight:600;color:var(--t);margin-bottom:3px}
+.bn-s{font-size:10.5px;color:var(--tm);line-height:1.35}
+@media(max-width:1080px){.bignums{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.bignums{grid-template-columns:repeat(2,1fr);gap:9px}.bn{padding:14px 13px}}
+
+/* nav boxes */
+.navsec{padding:38px 22px 54px;max-width:var(--maxw);margin:0 auto;width:100%}
+.navsec-h{font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:2px;
+  color:var(--tm);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.navsec-h::after{content:'';flex:1;height:1px;background:var(--bd)}
+/* 6 cards → 3×2 em telas largas (auto-fit deixava um órfão na 2ª linha) */
+.navgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:960px){.navgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.navgrid{grid-template-columns:1fr}}
+.navbox{text-align:left;background:var(--glass);border:1px solid var(--bd);border-radius:20px;
+  padding:24px 22px;position:relative;overflow:hidden;transition:.28s var(--ease);min-height:178px;
+  display:flex;flex-direction:column;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.navbox::after{content:'';position:absolute;top:-70px;right:-70px;width:190px;height:190px;border-radius:50%;
+  background:var(--ac);opacity:0;filter:blur(70px);transition:opacity .45s}
+.navbox:hover::after{opacity:.16}
+.navbox:hover{border-color:var(--ac-hover);transform:translateY(-3px);
+  box-shadow:0 18px 44px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.07)}
+.navbox > *{position:relative;z-index:1}
+.navbox-ic{width:42px;height:42px;border-radius:12px;background:var(--ac-soft2);border:1px solid var(--ac-hover);
+  display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;transition:.28s}
+.navbox:hover .navbox-ic{background:var(--grad-ac);border-color:transparent}
+.navbox-n{font-family:'Space Mono',monospace;font-size:10px;color:var(--ac);letter-spacing:1.5px;
+  position:absolute;top:22px;right:22px;z-index:1}
+.navbox-t{font-family:'Urbanist',sans-serif;font-weight:800;font-size:19px;letter-spacing:-.3px;margin-bottom:7px}
+.navbox-d{font-size:12.5px;color:var(--tm);line-height:1.5;flex:1}
+.navbox-go{font-size:12px;color:var(--ac);font-weight:600;margin-top:14px;display:flex;align-items:center;gap:6px;transition:.2s}
+.navbox:hover .navbox-go{gap:11px}
+.navbox-badge{position:absolute;bottom:22px;right:22px;font-family:'Space Mono',monospace;font-size:8.5px;
+  text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:5px;
+  background:var(--glass2);border:1px solid var(--bd);color:var(--tdim);z-index:1}
+
+/* ============ SECTION SHELL ============ */
+.sec-head{padding:32px 0 22px}
+.sec-back{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--tm);margin-bottom:16px;
+  border:1px solid var(--bd);border-radius:8px;padding:6px 13px;transition:.2s;background:var(--glass)}
+.sec-back:hover{color:var(--t);border-color:var(--ac-hover);background:var(--ac-soft)}
+.sec-eyebrow{font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:2.4px;
+  color:var(--ac);margin-bottom:10px}
+.sec-title{font-family:'Urbanist',sans-serif;font-weight:300;font-size:clamp(28px,3.6vw,44px);
+  letter-spacing:-1.2px;line-height:1.04;margin-bottom:10px}
+.sec-title b{font-weight:800}
+.sec-sub{font-size:14px;color:var(--tm);max-width:70ch;line-height:1.65}
+
+/* cards / kpi */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px;margin-bottom:14px}
+.kcard{background:var(--glass);border:1px solid var(--bd);border-radius:17px;padding:18px;position:relative;
+  overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);transition:.25s}
+.kcard::after{content:'';position:absolute;top:-60px;right:-60px;width:150px;height:150px;border-radius:50%;
+  background:var(--ac);opacity:0;filter:blur(60px);transition:opacity .4s}
+.kcard:hover{border-color:var(--bd2)}
+.kcard:hover::after{opacity:.10}
+.kcard > *{position:relative;z-index:1}
+.kcard.imp{border-color:rgba(255,230,0,.22)}
+.kcard.imp .kc-v{color:var(--ac)}
+.kcard.blue{border-color:rgba(126,139,245,.24)}
+.kcard.blue .kc-v{color:var(--ac2)}
+.kc-l{font-size:11px;color:var(--tm);margin-bottom:8px;font-weight:500;display:flex;align-items:center;gap:6px}
+.kc-v{font-family:'Urbanist',sans-serif;font-weight:800;font-size:28px;line-height:1;letter-spacing:-.6px;margin-bottom:5px}
+.kc-s{font-size:11px;color:var(--tm);line-height:1.4}
+.kc-badge{font-family:'Space Mono',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.6px;
+  padding:2px 7px;border-radius:5px;background:var(--ac-soft2);color:var(--ac);border:1px solid var(--ac-hover)}
+
+.panel{background:var(--glass);border:1px solid var(--bd);border-radius:20px;padding:22px 24px;margin-bottom:16px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.panel-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.panel-t{font-family:'Urbanist',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.2px}
+.panel-st{font-size:12px;color:var(--tm);margin-top:3px}
+
+/* table */
+.tbl-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--bd)}
+table.dt{width:100%;border-collapse:collapse;font-size:12.5px;min-width:760px}
+table.dt th{font-family:'Space Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--tm);text-align:right;padding:11px 13px;background:var(--glass2);border-bottom:1px solid var(--bd2);
+  white-space:nowrap;position:sticky;top:0}
+table.dt th.l,table.dt td.l{text-align:left}
+table.dt td{padding:11px 13px;text-align:right;border-bottom:1px solid var(--bd);white-space:nowrap;color:var(--t)}
+table.dt tr:last-child td{border-bottom:none}
+table.dt tbody tr{transition:.15s}
+table.dt tbody tr:hover td{background:var(--glass)}
+table.dt tr.tot td{font-weight:700;background:var(--ac-soft);border-top:2px solid var(--ac-hover);color:var(--t)}
+table.dt tr.tot td.l{color:var(--ac)}
+.cell-code{font-family:'Space Mono',monospace;font-size:11px;color:var(--ac)}
+.cell-vert{font-size:10px;color:var(--tm);display:block}
+.imp-col{color:var(--ac2)!important;font-weight:600}
+.dash{color:var(--tdim)}
+.chip{display:inline-block;font-family:'Space Mono',monospace;font-size:8.5px;text-transform:uppercase;
+  letter-spacing:.5px;padding:2px 7px;border-radius:5px;background:var(--glass2);color:var(--tm);border:1px solid var(--bd)}
+.chip.prelim{background:rgba(126,139,245,.14);color:var(--ac2);border-color:rgba(126,139,245,.32)}
+.chip.vid{background:var(--ac-soft2);color:var(--ac);border-color:var(--ac-hover)}
+
+/* notes */
+.note{font-size:12.5px;color:var(--tm);background:var(--glass);border:1px solid var(--bd);border-left:3px solid var(--ac);
+  border-radius:0 12px 12px 0;padding:14px 18px;line-height:1.65;margin-bottom:12px}
+.note strong{color:var(--t)}
+.note-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.note-grid{grid-template-columns:1fr}}
+
+/* ---- estado vazio (V1: seções prontas aguardando dados) ---- */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  gap:11px;padding:60px 30px;border:1px dashed var(--bd2);border-radius:22px;background:var(--glass);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.empty-ic{width:56px;height:56px;border-radius:16px;background:var(--ac-soft);border:1px solid var(--ac-hover);
+  display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:4px}
+.empty-t{font-family:'Urbanist',sans-serif;font-weight:800;font-size:19px;letter-spacing:-.3px}
+.empty-d{font-size:13px;color:var(--tm);max-width:52ch;line-height:1.6}
+.empty-tag{font-family:'Space Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1.4px;
+  color:var(--ac);border:1px solid var(--ac-hover);background:var(--ac-soft);border-radius:6px;padding:4px 10px;margin-top:4px}
+
+/* ============ CAMPANHAS ============ */
+.campgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:30px}
+.campbox{text-align:left;background:var(--glass);border:1px solid var(--bd);border-radius:20px;overflow:hidden;
+  transition:.28s var(--ease);display:flex;flex-direction:column;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.campbox:hover{border-color:var(--ac-hover);transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.campbox-top{position:relative;height:128px;overflow:hidden;background:#11111c}
+.campbox-top img{width:100%;height:100%;object-fit:cover;opacity:.62;transition:.4s}
+.campbox:hover .campbox-top img{opacity:.82;transform:scale(1.05)}
+.campbox-top::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,15,.15),rgba(8,8,15,.92))}
+/* capa-placeholder quando o flight ainda não tem criativo de imagem */
+.campbox-top.ph{background:
+  radial-gradient(120% 120% at 80% 0%, rgba(255,230,0,.22), transparent 60%),
+  linear-gradient(150deg, rgba(45,50,119,.85), #101020);
+  display:flex;align-items:center;justify-content:center}
+.campbox-ph-txt{font-family:'Urbanist',sans-serif;font-weight:900;font-size:40px;letter-spacing:-2px;
+  color:rgba(255,255,255,.14);text-transform:uppercase;user-select:none}
+.campbox-vert{position:absolute;top:12px;left:12px;z-index:2;font-family:'Space Mono',monospace;font-size:9px;
+  text-transform:uppercase;letter-spacing:1px;padding:3px 9px;border-radius:6px;
+  background:rgba(8,8,15,.7);border:1px solid var(--bd2);color:var(--t)}
+.campbox-code{position:absolute;top:12px;right:12px;z-index:2;font-family:'Space Mono',monospace;font-size:10px;
+  color:var(--ac);background:rgba(8,8,15,.7);border:1px solid var(--ac-hover);padding:3px 8px;border-radius:6px}
+.campbox-body{padding:16px 18px 18px;flex:1;display:flex;flex-direction:column}
+.campbox-name{font-family:'Urbanist',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.3px;margin-bottom:3px}
+.campbox-per{font-size:11px;color:var(--tm);margin-bottom:13px;font-family:'Space Mono',monospace}
+.campbox-mini{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:auto}
+.cm{background:var(--glass2);border-radius:10px;padding:8px 10px}
+.cm-v{font-family:'Urbanist',sans-serif;font-weight:800;font-size:15px;line-height:1}
+.cm-l{font-size:9.5px;color:var(--tm);margin-top:3px}
+.campbox-go{margin-top:13px;font-size:12px;color:var(--ac);font-weight:600;display:flex;align-items:center;gap:6px;transition:.2s}
+.campbox:hover .campbox-go{gap:11px}
+
+/* feature cards */
+.det-feat{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.featcard{background:var(--glass2);border:1px solid var(--bd);border-radius:15px;padding:16px;transition:.2s}
+.featcard:hover{border-color:var(--ac-hover)}
+.featcard-n{font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--ac);margin-bottom:10px}
+.featcard-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--bd)}
+.featcard-row:last-of-type{border-bottom:none}
+.featcard-row .k{color:var(--tm)}
+.featcard-row .v{font-weight:600;font-family:'Urbanist',sans-serif}
+.featcard-obs{font-size:10.5px;color:var(--tm);margin-top:9px;line-height:1.45;font-style:italic}
+
+/* ---- timeline de flights (dentro do Consolidado) ---- */
+.timeline{position:relative;padding:40px 16px 20px}
+.tl-line{position:relative;height:4px;background:var(--bd2);border-radius:2px;margin:64px 10px 74px}
+.tl-line::before{content:'';position:absolute;inset:0;border-radius:2px;
+  background:linear-gradient(90deg,var(--blue-l),var(--ac))}
+/* área de clique generosa (43px), marcador pequeno pintado no ::before —
+   pintar o fundo do box com padding virava um círculo de 43px */
+.tl-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:43px;height:43px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5}
+.tl-dot::before{content:'';width:13px;height:13px;border-radius:50%;background:var(--ac);
+  border:2px solid var(--bg);box-shadow:0 0 0 2px var(--ac),0 0 14px rgba(255,230,0,.5);transition:.2s}
+.tl-dot:hover::before,.tl-dot.active::before{box-shadow:0 0 0 3px var(--ac-l),0 0 22px rgba(255,230,0,.75);transform:scale(1.14)}
+.tl-label{position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%);
+  font-family:'Space Mono',monospace;font-size:9px;color:var(--tm);white-space:nowrap;text-align:center;line-height:1.4}
+.tl-card{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);min-width:230px;background:var(--bg2);
+  border:1px solid var(--ac-hover);border-radius:15px;padding:14px 16px;opacity:0;pointer-events:none;
+  transition:opacity .15s;z-index:20;box-shadow:0 16px 40px rgba(0,0,0,.6)}
+.tl-dot:hover .tl-card,.tl-dot.active .tl-card,.tl-card:hover{opacity:1!important;pointer-events:auto!important}
+.tl-card-t{font-family:'Urbanist',sans-serif;font-weight:800;font-size:14px;margin-bottom:10px;color:var(--t)}
+.tl-card-row{display:flex;justify-content:space-between;gap:16px;font-size:11px;padding:3px 0;border-bottom:1px solid var(--bd)}
+.tl-card-row:last-of-type{border:none}
+.tl-card-row .k{color:var(--tm)}
+.tl-card-row .v{font-weight:600}
+.tl-det-btn{display:block;width:100%;margin-top:10px;padding:7px;text-align:center;background:var(--ac-soft2);
+  border:1px solid var(--ac-hover);border-radius:9px;font-size:11px;color:var(--ac);font-weight:600;transition:.2s}
+.tl-det-btn:hover{background:var(--grad-ac);color:var(--on-ac);border-color:transparent}
+.tl-detail{display:none;margin-top:16px;padding:18px;background:var(--glass);border:1px solid var(--bd);border-radius:16px}
+.tl-detail.open{display:block}
+
+/* ============ AUDIÊNCIAS ============ */
+.audgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:13px;margin-bottom:18px}
+.audcard{background:var(--glass);border:1px solid var(--bd);border-radius:17px;padding:17px 18px;transition:.24s;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.audcard:hover{border-color:var(--ac-hover);transform:translateY(-2px)}
+.audcard-n{font-family:'Urbanist',sans-serif;font-weight:800;font-size:15px;letter-spacing:-.2px;margin-bottom:2px}
+.audcard-c{font-size:10.5px;color:var(--tm);margin-bottom:12px;font-family:'Space Mono',monospace}
+.audbar{height:6px;border-radius:3px;background:var(--glass3);overflow:hidden;margin:10px 0 8px}
+.audbar > span{display:block;height:100%;border-radius:3px;background:var(--grad-ac)}
+.audcard-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
+.audcard-row .k{color:var(--tm)}
+.audcard-row .v{font-weight:600;font-family:'Urbanist',sans-serif}
+
+/* ============ CRIATIVOS ============ */
+.filters{display:flex;flex-direction:column;gap:14px;margin-bottom:22px;background:var(--glass);
+  border:1px solid var(--bd);border-radius:18px;padding:18px 20px;position:sticky;top:63px;z-index:50;
+  backdrop-filter:blur(var(--blur))}
+.filter-row{display:flex;flex-direction:column;gap:8px}
+.filter-lbl{font-family:'Space Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:1px;color:var(--tm)}
+.pills{display:flex;gap:7px;flex-wrap:wrap}
+.pill{padding:6px 14px;border-radius:20px;border:1px solid var(--bd);background:var(--glass);color:var(--tm);
+  font-size:11.5px;font-weight:500;transition:.18s;white-space:nowrap}
+.pill:hover{border-color:var(--bd2);color:var(--t);background:var(--glass2)}
+.pill.act{background:var(--ac-soft2);border-color:var(--ac-hover);color:var(--ac)}
+.pill .ct{opacity:.6;margin-left:5px;font-family:'Space Mono',monospace;font-size:9.5px}
+.cv-count{font-size:12px;color:var(--tm);margin-bottom:14px}
+.cv-count b{color:var(--t);font-family:'Urbanist',sans-serif;font-weight:700}
+
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;padding-bottom:40px}
+.ccard{background:var(--glass);border:1px solid var(--bd);border-radius:16px;overflow:hidden;transition:.22s;
+  display:flex;flex-direction:column;animation:fade .35s}
+.ccard:hover{border-color:var(--ac-hover);transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.4)}
+.ccard-media{position:relative;background:repeating-conic-gradient(#0e0e18 0% 25%, #12121e 0% 50%) 50%/18px 18px;
+  display:flex;align-items:center;justify-content:center;min-height:150px;max-height:300px;overflow:hidden}
+.ccard-media img{width:100%;height:auto;object-fit:contain;max-height:300px}
+.ccard-media.tall img{max-height:340px;object-fit:cover;object-position:top}
+.ccard-type{position:absolute;top:9px;left:9px;font-family:'Space Mono',monospace;font-size:8px;text-transform:uppercase;
+  letter-spacing:.8px;padding:3px 7px;border-radius:5px;background:rgba(8,8,15,.78);border:1px solid var(--bd2);color:var(--t);z-index:2}
+.ccard-type.vid{background:var(--ac-soft2);color:var(--ac);border-color:var(--ac-hover)}
+.ccard-type.ifr{background:rgba(126,139,245,.16);color:var(--ac2);border-color:rgba(126,139,245,.32)}
+.ccard-body{padding:11px 13px 13px}
+.ccard-camp{font-size:12px;font-weight:600;color:var(--t);margin-bottom:3px;line-height:1.3}
+.ccard-meta{font-family:'Space Mono',monospace;font-size:10px;color:var(--tm);display:flex;gap:8px;flex-wrap:wrap}
+.ccard-meta .sz{color:var(--ac)}
+.ccard-fmt{font-size:10px;color:var(--tm);margin-top:5px}
+
+.media-lazy{position:relative;width:100%;min-height:170px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;background:linear-gradient(135deg,#15151f,#0d0d16)}
+.media-lazy .play{width:52px;height:52px;border-radius:50%;background:var(--grad-ac);display:flex;align-items:center;
+  justify-content:center;box-shadow:0 6px 24px rgba(255,230,0,.32);transition:.2s}
+.media-lazy:hover .play{transform:scale(1.1)}
+.media-lazy .play svg{width:20px;height:20px;margin-left:3px}
+.media-lazy .hint{position:absolute;bottom:10px;font-size:10px;color:var(--tm);font-family:'Space Mono',monospace}
+.media-frame{width:100%;border:none;display:block;background:#000}
+
+/* ============ MATERIAIS ============ */
+.matgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.matcard{background:var(--glass);border:1px solid var(--bd);border-radius:17px;transition:.22s;text-align:left;
+  padding:0;overflow:hidden;display:flex;flex-direction:column}
+.matcard:hover{border-color:var(--ac-hover);transform:translateY(-3px)}
+.matcard-thumb{height:160px;overflow:hidden;background:#11111c;position:relative;flex-shrink:0}
+.matcard-thumb img{width:100%;height:100%;object-fit:cover;object-position:top}
+.matcard-thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(8,8,15,.7))}
+.matcard-tag{position:absolute;top:10px;left:10px;z-index:2;font-family:'Space Mono',monospace;font-size:8px;
+  text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:5px;
+  background:rgba(8,8,15,.75);border:1px solid var(--bd2);color:var(--tm)}
+.matcard-body{padding:14px 16px 16px;flex:1;display:flex;flex-direction:column}
+.matcard-t{font-family:'Urbanist',sans-serif;font-weight:700;font-size:13.5px;margin-bottom:12px;line-height:1.35;flex:1}
+.matcard-btn{display:block;padding:8px;text-align:center;background:var(--ac-soft2);border:1px solid var(--ac-hover);
+  border-radius:9px;font-size:11px;color:var(--ac);font-weight:600;text-decoration:none;transition:.2s}
+.matcard-btn:hover{background:var(--grad-ac);color:var(--on-ac);border-color:transparent}
+
+/* ============ BRAND-LIFT ============ */
+.bl-controls{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:18px;align-items:flex-end}
+.bl-cg{display:flex;flex-direction:column;gap:7px}
+.bl-cg .filter-lbl{margin:0}
+.chartwrap{position:relative;width:100%;height:360px}
+.bl-legend{display:flex;gap:16px;flex-wrap:wrap}
+.bl-leg{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--tm)}
+.bl-leg .dot{width:9px;height:9px;border-radius:50%}
+.bl-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:16px}
+.blc{background:var(--glass);border:1px solid var(--bd);border-radius:15px;padding:15px 17px}
+.blc-w{font-family:'Space Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:1px;color:var(--tm);margin-bottom:5px}
+.blc-camp{font-size:11px;color:var(--tm);margin-bottom:9px}
+.blc-v{font-family:'Urbanist',sans-serif;font-weight:800;font-size:26px;line-height:1;margin-bottom:3px}
+.blc-v.pos{color:var(--pos)} .blc-v.neg{color:var(--neg)}
+.blc-r{font-size:11px;color:var(--tm)}
+.blc-n{font-size:10px;color:var(--tdim);margin-top:5px}
+
+/* footer */
+.foot{text-align:center;padding:34px 22px 44px;font-size:11px;color:var(--tdim);
+  border-top:1px solid var(--bd);margin-top:20px;font-family:'Space Mono',monospace;line-height:1.8}
+.foot b{color:var(--tm)}
+
+/* mobile */
+@media(max-width:760px){.stage-logo img{height:56px}.stage-logo{padding:14px 20px}}
+@media(max-width:560px){
+  .topbar{padding:11px 14px;gap:8px}
+  .tb-tag,.tb-x,.tb-sep{display:none}
+  .mlmark-word{font-size:13px}
+  .filters{top:55px}
+  .hub-hero{padding:44px 18px 20px}
+}
+.hide{display:none!important}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     V1 sem gate de acesso e sem telemetria (decisão do cliente).
+     Para religar: reintroduzir #email-gate + initGate/submitGate e
+     o endpoint do Apps Script, como no dashboard de referência.
+     ============================================================ -->
+
+<div class="topbar">
+  <button class="tb-l" data-go="hub">
+    <span id="tb-brand"></span>
+    <span class="tb-sep"></span>
+    <span class="tb-x">×</span>
+    <img class="tb-hypr" id="tb-hypr" alt="HYPR">
+    <span class="tb-tag">Consolidado de Campanhas</span>
+  </button>
+  <div class="tb-r">
+    <button class="tb-home" data-go="hub">⌂ Início</button>
+  </div>
+</div>
+
+<div id="hub" class="view active">
+  <div class="hub-hero">
+    <div class="hero-blobs">
+      <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+    </div>
+    <div class="eyebrow-chip"><span class="dot"></span><span id="hub-eyebrow"></span></div>
+    <h1 class="hub-title urb" id="hub-title"></h1>
+    <p class="hub-sub" id="hub-sub"></p>
+    <div class="stage">
+      <div class="stage-logo">
+        <span id="stage-brand"></span>
+        <span class="x">Mercado Livre × HYPR</span>
+      </div>
+    </div>
+  </div>
+  <div class="wrap"><div class="bignums" id="bignums"></div></div>
+  <div class="marquee"><div class="marquee-track" id="marquee"></div></div>
+  <div class="navsec">
+    <div class="navsec-h">Explorar</div>
+    <div class="navgrid" id="navgrid"></div>
+  </div>
+</div>
+
+<div id="consolidado" class="view"><div class="wrap" id="consolidado-body"></div></div>
+<div id="campanhas"   class="view"><div class="wrap" id="campanhas-body"></div></div>
+<div id="audiencias"  class="view"><div class="wrap" id="audiencias-body"></div></div>
+<div id="criativos"   class="view"><div class="wrap" id="criativos-body"></div></div>
+<div id="brandlift"   class="view"><div class="wrap" id="brandlift-body"></div></div>
+<div id="materiais"   class="view"><div class="wrap" id="materiais-body"></div></div>
+
+<div class="foot">
+  <b>Mercado Livre × HYPR</b> · Consolidado de Campanhas<br>
+  Inteligência geoespacial auditável — dashboard gerado pela HYPR
+</div>
+
+<script>
+/* ============================================================
+   1. CONFIGURAÇÃO POR CLIENTE
+   ============================================================ */
+const CFG = {
+  cliente: "Mercado Livre",
+  periodo: "2026",
+  /* rótulo do eixo de agrupamento (campo `vert` de cada flight) */
+  vertLabel: "Tipo de ativação",
+  /* CPM/CPCV negociados padrão — usados para derivar rentabilidade
+     consolidada. `null` = não exibir rentabilidade agregada.
+     TODO: confirmar os valores contratados do Mercado Livre.        */
+  cpmNegPadrao: null,
+  cpcvNegPadrao: null,
+  /* true  = budget de vídeo é SEPARADO do display (soma no investido)
+     false = vídeo já está dentro do budget geral (não somar)          */
+  videoBudgetSeparado: false,
+};
+
+/* Marca. Assim que o arquivo oficial da logo do Mercado Livre chegar,
+   basta trocar BRAND.logo por um data: URI — o wordmark provisório
+   deixa de ser usado automaticamente.                                */
+const BRAND = {
+  logo: null,          /* data:image/png;base64,... */
+  logoAlt: "Mercado Livre",
+  hypr: "data:image/png;base64,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",
+};
+
+/* ============================================================
+   2. DADOS
+   Uma única fonte de verdade. A UI inteira é derivada daqui.
+   V1: estrutura pronta, listas vazias — nada foi inventado.
+   ============================================================ */
+const DATA = {
+  /* flights[] — 1 objeto por entrega de campanha num período.
+     Campos: vert, camp, mes, periodo, code, budget, custo_over,
+     cpm_neg, cpm_ef, rentab, impr, clicks, ctr, cpc, video,
+     creativeCamp [, prelim, v_budget, v_views, v_startviews,
+     v_vtr, v_clicks, v_cpcv_neg, v_cpcv_ef]                        */
+  flights: [],
+
+  /* features[] — capabilities HYPR ativadas em cada flight.
+     Campos: feat, vert, camp, code, vi, clicks, ctr, plays, obs     */
+  features: [],
+
+  /* audiences[] — segmentos/categorias entregues (seção própria).
+     Campos: aud, vert, camp, code, vi, clicks, ctr, vtr, obs        */
+  audiences: [],
+
+  /* creatives[] — peças veiculadas.
+     Campos: id, camp, vertical, code, type, size, size_label,
+     w, h, fmt, name, src [, feature]                                */
+  creatives: [],
+
+  /* brandlift[] — ondas de survey.
+     Campos: wave, type, vert, camp, code, nExp, nCtrl, rows[]       */
+  brandlift: [],
+
+  /* materiais — pós-vendas, estudos e audience discovery.
+     Cada item: {title, id} — id do Google Slides.
+     V1: seção pronta e vazia, conforme combinado.                   */
+  materiais: [
+    {id:'pos',      label:'Pós-Vendas',         ic:'📋', items:[]},
+    {id:'estudos',  label:'Estudos',            ic:'🔬', items:[]},
+    {id:'audience', label:'Audience Discovery', ic:'🎯', items:[]},
+  ],
+
+  /* totals — sobrescreve o consolidado calculado. Deixe vazio para
+     derivar dos flights (correto enquanto a base parte do zero).
+     Quando houver ajustes históricos (bonificadas, reconciliações),
+     grave aqui e o cálculo passa a ser ancorado nestes valores.     */
+  totals: {},
+
+  /* notas de transparência exibidas no Consolidado */
+  inconsistencias: [],
+};
+
+/* ============================================================
+   3. FORMATADORES
+   ============================================================ */
+const fmtInt  = n => (n==null||isNaN(n)) ? "—" : Math.round(n).toLocaleString("pt-BR");
+const fmtBRL  = n => (n==null||isNaN(n)) ? "—" : "R$ " + n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtBRL0 = n => (n==null||isNaN(n)) ? "—" : "R$ " + n.toLocaleString("pt-BR",{maximumFractionDigits:0});
+const fmtPct  = (n,d=2) => (n==null||isNaN(n)) ? "—" : (n*100).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d}) + "%";
+const fmtMi   = n => (n==null||isNaN(n)) ? "—" : (n>=1e6
+                  ? (n/1e6).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}) + " mi"
+                  : (n>=1e3 ? Math.round(n/1e3).toLocaleString("pt-BR") + " mil" : fmtInt(n)));
+const fmtBRLc = n => (n==null||isNaN(n)) ? "—" : (n>=1e6
+                  ? "R$ " + (n/1e6).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}) + " mi"
+                  : (n>=1e3 ? "R$ " + Math.round(n/1e3).toLocaleString("pt-BR") + " mil" : fmtBRL0(n)));
+const dash    = () => '<span class="dash">—</span>';
+const plural  = (n,s,p) => n===1 ? `1 ${s}` : `${n} ${p}`;
+const esc     = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ============================================================
+   4. CONSOLIDAÇÃO
+   Regra: soma direta enquanto a base parte do zero; assim que
+   DATA.totals tiver valores, eles vencem (base ancorada).
+   Taxas nunca são média de médias — derivam do custo efetivo.
+   ============================================================ */
+function computeTotals(){
+  const F = DATA.flights, stored = DATA.totals || {};
+  if(!F.length) return Object.assign({}, stored);
+  const sum = k => F.reduce((a,f)=>a + (Number(f[k]) || 0), 0);
+
+  const t = {
+    budget:     sum('budget'),
+    custo_over: sum('custo_over'),
+    impr:       sum('impr'),
+    clicks:     sum('clicks'),
+  };
+  /* custo efetivo ponderado pela entrega */
+  const E = F.reduce((a,f)=>a + (Number(f.cpm_ef)||0) * (Number(f.impr)||0) / 1000, 0);
+  t.custo_ef = E;
+  t.cpm_ef = t.impr ? +(E / t.impr * 1000).toFixed(2) : null;
+  t.ctr    = t.impr ? +(t.clicks / t.impr).toFixed(5) : null;
+  t.cpc    = t.clicks ? +(E / t.clicks).toFixed(3) : null;
+  t.rentab = (CFG.cpmNegPadrao && t.cpm_ef!=null)
+    ? +((CFG.cpmNegPadrao - t.cpm_ef) / CFG.cpmNegPadrao).toFixed(4) : null;
+
+  const V = F.filter(f=>f.video);
+  if(V.length){
+    const sv = V.reduce((a,f)=>a + (Number(f.v_startviews)||0), 0);
+    t.v_views   = V.reduce((a,f)=>a + (Number(f.v_views)||0), 0);
+    t.v_clicks  = V.reduce((a,f)=>a + (Number(f.v_clicks)||0), 0);
+    t.v_budget  = V.reduce((a,f)=>a + (Number(f.v_budget)||0), 0);
+    t.v_vtr     = sv ? +(t.v_views / sv).toFixed(4) : null;
+    t.v_cpcv_ef = t.v_views
+      ? +(V.reduce((a,f)=>a + (Number(f.v_cpcv_ef)||0) * (Number(f.v_views)||0), 0) / t.v_views).toFixed(4)
+      : null;
+    t.rentab_cpcv = (CFG.cpcvNegPadrao && t.v_cpcv_ef!=null)
+      ? +((CFG.cpcvNegPadrao - t.v_cpcv_ef) / CFG.cpcvNegPadrao).toFixed(4) : null;
+  }
+  t.investido_cliente = t.budget + (CFG.videoBudgetSeparado ? (t.v_budget||0) : 0);
+
+  return Object.assign(t, stored);   /* valores gravados vencem o cálculo */
+}
+let TOT = computeTotals();
+
+/* ============================================================
+   5. HUB — tudo derivado do DATA (nada de número fixo no HTML;
+   era a origem mais comum de contador desatualizado)
+   ============================================================ */
+function countCreatives(){
+  const C = DATA.creatives;
+  return {
+    total: C.length,
+    img: C.filter(c=>c.type==='image').length,
+    vid: C.filter(c=>c.type==='video').length,
+    ifr: C.filter(c=>c.type==='iframe').length,
+  };
+}
+function computeBig(){
+  const F = DATA.flights;
+  const camps  = [...new Set(F.map(f=>f.camp))];
+  const featTypes = [...new Set(DATA.features.map(f=>f.feat))];
+  const cr = countCreatives();
+  const pend = '<span class="bn-v urb pend">—</span>';
+  const P = 'aguardando dados';
+
+  return [
+    { v: F.length ? String(F.length) : null, l:'Campanhas',
+      s: F.length ? `${plural(camps.length,'campanha','campanhas')} · ${plural(F.length,'flight','flights')}` : P },
+    { v: featTypes.length ? String(featTypes.length) : null, l:'Features',
+      s: featTypes.length ? `${plural(featTypes.length,'tipo','tipos')} · ${plural(DATA.features.length,'ativação','ativações')}` : P },
+    { v: TOT.impr ? fmtMi(TOT.impr) : null, l:'Impressões entregues',
+      s: TOT.v_views ? `+${fmtMi(TOT.v_views)} views de vídeo` : P },
+    { v: TOT.investido_cliente ? fmtBRLc(TOT.investido_cliente) : null, l:'Investido pelo cliente',
+      s: TOT.investido_cliente ? 'Budget contratado' : P },
+    { v: TOT.clicks ? fmtMi(TOT.clicks) : null, l:'Cliques',
+      s: TOT.clicks ? `${fmtInt(TOT.clicks)} display${TOT.v_clicks?` + ${fmtInt(TOT.v_clicks)} vídeo`:''}` : P },
+    { v: cr.total ? String(cr.total) : null, l:'Criativos veiculados',
+      s: cr.total ? [ cr.img && plural(cr.img,'imagem','imagens'),
+                      cr.vid && plural(cr.vid,'vídeo','vídeos'),
+                      cr.ifr && plural(cr.ifr,'interativo','interativos') ].filter(Boolean).join(' · ') : P },
+  ];
+}
+
+const NAV = [
+  {id:'consolidado', n:'01', ic:'📊', t:'Consolidado Geral',
+   d:'Todos os números do portfólio em um só lugar: entrega, investimento, performance de display e vídeo e features ativadas.'},
+  {id:'campanhas', n:'02', ic:'🎯', t:'Campanhas Ativadas',
+   d:'Cada flight em detalhe — métricas, criativos veiculados e resultados das features daquela campanha.'},
+  {id:'audiencias', n:'03', ic:'👥', t:'Audiências',
+   d:'Desempenho por segmento e categoria: quem foi impactado, quanto entregou e como respondeu.'},
+  {id:'criativos', n:'04', ic:'🎨', t:'Central de Criativos',
+   d:'Galeria completa das peças veiculadas, com filtros por tamanho e por campanha.'},
+  {id:'brandlift', n:'05', ic:'📈', t:'Brand-Lift',
+   d:'Pesquisas de percepção comparando o grupo exposto aos criativos com um grupo controle.'},
+  {id:'materiais', n:'06', ic:'📁', t:'Hub de Materiais',
+   d:'Biblioteca de pós-vendas, estudos e audience discovery produzidos pela HYPR na parceria.'},
+];
+
+const CAPABILITIES_FALLBACK = [
+  'Downloaded Apps','Topics','Tap-to-Map','Tap-to-Go','PDOOH','Segmentação por SO',
+  'Click-to-Calendar','Survey','CTV','Geofencing','Isócronas','Inteligência geoespacial'
+];
+
+function brandMark(size){
+  if(BRAND.logo){
+    return `<img class="${size==='lg'?'stage-ml':'tb-logo'}" src="${BRAND.logo}" alt="${esc(BRAND.logoAlt)}"
+      style="${size==='lg'?'height:96px;width:auto;filter:drop-shadow(0 0 34px rgba(255,230,0,.28))':''}">`;
+  }
+  /* wordmark provisório — some assim que BRAND.logo for preenchido */
+  return `<span class="mlmark ${size==='lg'?'lg':''}" title="Logo provisória — aguardando o arquivo oficial">
+    <span class="mlmark-badge">ML</span><span class="mlmark-word">mercado livre</span></span>`;
+}
+
+function renderHub(){
+  const F = DATA.flights, cr = countCreatives();
+  document.getElementById('tb-brand').innerHTML    = brandMark('sm');
+  document.getElementById('stage-brand').innerHTML = brandMark('lg');
+  document.getElementById('tb-hypr').src = BRAND.hypr;
+
+  document.getElementById('hub-eyebrow').textContent = `${CFG.cliente} × HYPR · ${CFG.periodo}`;
+  document.getElementById('hub-title').innerHTML = F.length
+    ? 'Nossa história não cabe <em>em slides</em>'
+    : 'A parceria começa <em>aqui</em>';
+  document.getElementById('hub-sub').textContent = F.length
+    ? `${plural([...new Set(F.map(f=>f.camp))].length,'campanha','campanhas')}, ${plural(F.length,'flight','flights')} e ${fmtMi(TOT.impr)} de impressões entregues. Este é o panorama vivo do que o ${CFG.cliente} construiu com a HYPR — explore os números, os criativos e o impacto de marca.`
+    : `Estrutura pronta para receber as campanhas do ${CFG.cliente}. Cada seção abaixo já existe e passa a exibir os números assim que os dados de cada flight forem carregados.`;
+
+  document.getElementById('bignums').innerHTML = computeBig().map((b,i)=>`
+    <div class="bn reveal" style="transition-delay:${i*60}ms">
+      <div class="bn-v urb${b.v?'':' pend'}">${b.v || '—'}</div>
+      <div class="bn-l">${b.l}</div>
+      <div class="bn-s">${b.s}</div>
+    </div>`).join('');
+
+  const caps = DATA.features.length
+    ? [...new Set(DATA.features.map(f=>f.feat))]
+    : CAPABILITIES_FALLBACK;
+  const strip = caps.map(c=>`<span class="marquee-item">${esc(c)}</span>`).join('');
+  document.getElementById('marquee').innerHTML = strip + strip;   /* duplicado p/ loop contínuo */
+
+  document.getElementById('navgrid').innerHTML = NAV.map((b,i)=>{
+    const empty = sectionIsEmpty(b.id);
+    return `<button class="navbox reveal" data-go="${b.id}" style="transition-delay:${i*55}ms">
+      <span class="navbox-n">${b.n}</span>
+      <div class="navbox-ic">${b.ic}</div>
+      <div class="navbox-t">${b.t}</div>
+      <div class="navbox-d">${b.d}</div>
+      <div class="navbox-go">Abrir <span>→</span></div>
+      ${empty?'<span class="navbox-badge">aguardando dados</span>':''}
+    </button>`;
+  }).join('');
+  initReveal();
+}
+
+function sectionIsEmpty(id){
+  switch(id){
+    case 'consolidado': return !DATA.flights.length;
+    case 'campanhas':   return !DATA.flights.length;
+    case 'audiencias':  return !DATA.audiences.length;
+    case 'criativos':   return !DATA.creatives.length;
+    case 'brandlift':   return !DATA.brandlift.length;
+    case 'materiais':   return !DATA.materiais.some(c=>c.items.length);
+    default: return false;
+  }
+}
+
+/* ============================================================
+   6. COMPONENTES REUTILIZÁVEIS
+   ============================================================ */
+function secHead(opts){
+  return `<div class="sec-head">
+    <button class="sec-back" data-go="${opts.back||'hub'}">← ${opts.backLabel||'Voltar ao início'}</button>
+    ${opts.eyebrow?`<div class="sec-eyebrow">${opts.eyebrow}</div>`:''}
+    <h1 class="sec-title urb">${opts.title}</h1>
+    ${opts.sub?`<p class="sec-sub">${opts.sub}</p>`:''}
+  </div>`;
+}
+function emptyState(ic, title, desc, tag){
+  return `<div class="empty reveal">
+    <div class="empty-ic">${ic}</div>
+    <div class="empty-t urb">${title}</div>
+    <div class="empty-d">${desc}</div>
+    ${tag!==false?`<span class="empty-tag">${tag||'aguardando dados'}</span>`:''}
+  </div>`;
+}
+function initReveal(){
+  const els = document.querySelectorAll('.reveal:not(.in)');
+  if(!els.length) return;
+  if(!('IntersectionObserver' in window)){ els.forEach(e=>e.classList.add('in')); return; }
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {rootMargin:'160px 0px 220px 0px', threshold:0});
+  els.forEach(e=>io.observe(e));
+  /* rede de segurança: nada pode ficar invisível para sempre se o
+     observer não disparar (view oculta, impressão, motor sem suporte) */
+  clearTimeout(initReveal._t);
+  initReveal._t = setTimeout(()=>{
+    document.querySelectorAll('.view.active .reveal:not(.in)').forEach(e=>{
+      const r = e.getBoundingClientRect();
+      if(r.top < window.innerHeight + 400) e.classList.add('in');
+    });
+  }, 900);
+}
+window.addEventListener('beforeprint', ()=>document.querySelectorAll('.reveal').forEach(e=>e.classList.add('in')));
+
+/* ============================================================
+   7. ROTEAMENTO
+   ============================================================ */
+function go(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.add("active");
+  window.scrollTo({top:0,behavior:"instant"});
+  if(id==="brandlift") setTimeout(renderBLChart,60);
+  initReveal();
+}
+document.addEventListener("click", e=>{
+  const b = e.target.closest("[data-go]");
+  if(b) go(b.dataset.go);
+});
+
+/* ============================================================
+   8. CONSOLIDADO GERAL
+   ============================================================ */
+function buildTimeline(F){
+  if(!F.length) return '';
+  const total = F.length - 1;
+  const dots = F.map((f,i)=>{
+    const pct = total > 0 ? (i/total)*100 : 50;
+    return `<div class="tl-dot" style="left:${pct}%" data-tl="${esc(f.code)}">
+      <div class="tl-card" style="bottom:calc(100% + 4px);top:auto">
+        <div class="tl-card-t">${esc(f.camp)}</div>
+        <div class="tl-card-row"><span class="k">Mês</span><span class="v">${esc(f.mes)}</span></div>
+        <div class="tl-card-row"><span class="k">Budget</span><span class="v">${fmtBRL0(f.budget)}</span></div>
+        <div class="tl-card-row"><span class="k">Impressões</span><span class="v">${fmtMi(f.impr)}</span></div>
+        <div class="tl-card-row"><span class="k">Cliques</span><span class="v">${fmtInt(f.clicks)}</span></div>
+        <div class="tl-card-row"><span class="k">CTR</span><span class="v">${fmtPct(f.ctr)}</span></div>
+        <button class="tl-det-btn" onclick="toggleTlDetail('${esc(f.code)}')">Ver detalhes</button>
+      </div>
+      <span class="tl-label">${esc(f.mes)}<br>${esc(f.code)}</span>
+    </div>`;
+  }).join('');
+
+  const details = F.map(f=>{
+    const feats = DATA.features.filter(ft=>String(ft.code).includes(f.code));
+    const cre   = DATA.creatives.filter(c=>c.camp===f.creativeCamp && c.type==='image').slice(0,4);
+    const featHtml = feats.length
+      ? feats.map(ft=>`<div style="font-size:11px;padding:6px 0;border-bottom:1px solid var(--bd)"><b style="color:var(--ac)">${esc(ft.feat)}</b>${ft.clicks!=null?' · '+fmtInt(ft.clicks)+' cliques':''}</div>`).join('')
+      : '<span style="font-size:11px;color:var(--tm)">—</span>';
+    const creHtml = cre.length
+      ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:8px">${cre.map(c=>`<img src="${c.src}" style="width:100%;border-radius:7px;border:1px solid var(--bd)" alt="">`).join('')}</div>`
+      : '';
+    return `<div class="tl-detail" id="tld-${esc(f.code)}">
+      <div class="panel-t" style="margin-bottom:12px">${esc(f.camp)} · ${esc(f.mes)}</div>
+      <div class="kgrid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))">
+        <div class="kcard"><div class="kc-l">Impressões</div><div class="kc-v urb" style="font-size:20px">${fmtMi(f.impr)}</div></div>
+        <div class="kcard"><div class="kc-l">Cliques</div><div class="kc-v urb" style="font-size:20px">${fmtInt(f.clicks)}</div></div>
+        <div class="kcard"><div class="kc-l">CTR</div><div class="kc-v urb" style="font-size:20px">${fmtPct(f.ctr)}</div></div>
+        <div class="kcard"><div class="kc-l">CPC</div><div class="kc-v urb" style="font-size:20px">${fmtBRL(f.cpc)}</div></div>
+        <div class="kcard"><div class="kc-l">CPM efetivo</div><div class="kc-v urb" style="font-size:20px">${fmtBRL(f.cpm_ef)}</div></div>
+        <div class="kcard imp"><div class="kc-l">Budget</div><div class="kc-v urb" style="font-size:20px">${fmtBRL0(f.budget)}</div></div>
+        ${f.video?`<div class="kcard imp"><div class="kc-l">Views 100%</div><div class="kc-v urb" style="font-size:20px">${fmtInt(f.v_views)}</div></div>
+        <div class="kcard"><div class="kc-l">VTR</div><div class="kc-v urb" style="font-size:20px">${fmtPct(f.v_vtr)}</div></div>`:''}
+      </div>
+      ${feats.length?`<div style="margin-top:14px"><div class="filter-lbl" style="margin-bottom:8px">Features ativadas</div>${featHtml}</div>`:''}
+      ${cre.length?`<div style="margin-top:14px"><div class="filter-lbl" style="margin-bottom:8px">Preview de criativos</div>${creHtml}</div>`:''}
+    </div>`;
+  }).join('');
+
+  return `<div class="timeline"><div class="tl-line">${dots}</div></div>${details}`;
+}
+function toggleTlDetail(code){
+  document.querySelectorAll('.tl-detail').forEach(el=>{
+    if(el.id==='tld-'+code) el.classList.toggle('open');
+    else el.classList.remove('open');
+  });
+}
+
+const FEAT_DISPLAY = { 'Tap-to-Map / Tap-to-Go':'Tap-to-Go' };
+
+function buildFeatCards(){
+  const map = {};
+  DATA.features.forEach(f=>{
+    const key = f.feat;
+    if(!map[key]) map[key] = {feat:key, camps:[], vi:0, clicks:0, ctr_sum:0, ctr_n:0, plays:0};
+    map[key].camps.push(f.camp);
+    if(f.vi)     map[key].vi     += f.vi;
+    if(f.clicks) map[key].clicks += f.clicks;
+    if(f.ctr){   map[key].ctr_sum += f.ctr; map[key].ctr_n++; }
+    if(f.plays)  map[key].plays  += f.plays;
+    if(f.feat==='Survey') map[key].isSurvey = true;
+  });
+  return Object.values(map).map(g=>{
+    const campSet = [...new Set(g.camps)];
+    const surveyBtn = g.isSurvey
+      ? `<button class="matcard-btn" style="margin-top:10px;width:100%" onclick="go('brandlift')">Ver resultados de Survey →</button>` : '';
+    return `<div class="featcard reveal" style="padding:18px;display:flex;flex-direction:column">
+      <div style="font-size:14px;font-weight:700;color:var(--t);margin-bottom:6px;line-height:1.2">${esc(FEAT_DISPLAY[g.feat]||g.feat)}</div>
+      <div style="font-size:12px;color:var(--ac);font-weight:600;margin-bottom:10px">${plural(campSet.length,'campanha','campanhas')}</div>
+      ${g.vi?`<div class="featcard-row"><span class="k">Impressões</span><span class="v">${fmtInt(g.vi)}</span></div>`:''}
+      ${g.clicks?`<div class="featcard-row"><span class="k">Cliques</span><span class="v">${fmtInt(g.clicks)}</span></div>`:''}
+      ${g.ctr_n?`<div class="featcard-row"><span class="k">CTR</span><span class="v">${fmtPct(g.ctr_sum/g.ctr_n)}</span></div>`:''}
+      ${g.plays?`<div class="featcard-row"><span class="k">Plays PDOOH</span><span class="v">${fmtInt(g.plays)}</span></div>`:''}
+      ${surveyBtn}
+    </div>`;
+  }).join('');
+}
+
+function buildConsolidado(){
+  const F = DATA.flights, t = TOT;
+  const head = secHead({
+    eyebrow:'01 · Portfólio',
+    title:'Consolidado <b>Geral</b>',
+    sub:`Principais métricas da entrega HYPR ao longo da parceria com o ${CFG.cliente}.`
+  });
+  if(!F.length){
+    return head + emptyState('📊','Sem flights carregados ainda',
+      'Assim que a planilha de cada campanha for preenchida, este painel passa a exibir os KPIs de display e vídeo, a linha do tempo por flight, a tabela geral e os cards de features — todos calculados a partir do objeto DATA.');
+  }
+
+  const hasVideo = F.some(f=>f.video);
+  const kpisDisplay = [
+    {l:"Impressões visíveis entregues", v:fmtInt(t.impr), s:`Display · ${plural(F.length,'flight','flights')}`, imp:1},
+    {l:"Cliques", v:fmtInt((t.clicks||0)+(t.v_clicks||0)), imp:1},
+    {l:"CTR", v:fmtPct(t.ctr)},
+    {l:"Total investido", v:fmtBRL0(t.investido_cliente), imp:1},
+    {l:"CPC", v:fmtBRL(t.cpc)},
+    {l:"CPM efetivo", v:fmtBRL(t.cpm_ef)},
+  ];
+  if(t.rentab!=null) kpisDisplay.push({l:"Rentabilidade do CPM", v:fmtPct(t.rentab,1), s:`vs. CPM negociado de ${fmtBRL(CFG.cpmNegPadrao)}`});
+
+  const kpisVideo = hasVideo ? [
+    {l:"Views 100% em vídeo", v:fmtInt(t.v_views), imp:1},
+    {l:"VTR", v:fmtPct(t.v_vtr), s:"view-through rate"},
+    {l:"Cliques em vídeo", v:fmtInt(t.v_clicks)},
+    {l:"CPCV efetivo", v:fmtBRL(t.v_cpcv_ef)},
+  ] : [];
+  if(hasVideo && t.rentab_cpcv!=null)
+    kpisVideo.push({l:"Rentabilidade do CPCV", v:fmtPct(t.rentab_cpcv,1),
+      s:`CPCV efetivo ${fmtBRL(t.v_cpcv_ef)} vs. ${fmtBRL(CFG.cpcvNegPadrao)} contratado`});
+
+  const renderKpis = arr => arr.map((k,i)=>`<div class="kcard reveal ${k.imp?'imp':''}" style="transition-delay:${i*45}ms">
+    <div class="kc-l">${k.l}</div><div class="kc-v urb">${k.v}</div><div class="kc-s">${k.s||''}</div></div>`).join('');
+
+  let kg = `<div class="filter-lbl" style="margin:18px 0 9px">Display</div>
+    <div class="kgrid">${renderKpis(kpisDisplay)}</div>`;
+  if(hasVideo) kg += `<div class="filter-lbl" style="margin:18px 0 9px">Vídeo</div>
+    <div class="kgrid">${renderKpis(kpisVideo)}</div>`;
+
+  const rows = F.map(f=>`<tr>
+      <td class="l"><b>${esc(f.camp)}</b>${f.prelim?' <span class="chip prelim">preliminar</span>':''}${f.video?' <span class="chip vid">+ vídeo</span>':''}
+        <span class="cell-vert">${esc(f.vert)} · ${esc(f.mes)}</span></td>
+      <td><span class="cell-code">${esc(f.code)}</span></td>
+      <td>${fmtBRL0(f.budget)}</td>
+      <td class="imp-col">${fmtInt(f.impr)}</td>
+      <td>${fmtInt(f.clicks)}</td>
+      <td>${fmtPct(f.ctr)}</td>
+      <td>${fmtBRL(f.cpc)}</td>
+      <td>${fmtBRL(f.cpm_ef)}</td>
+      <td>${f.rentab!=null?fmtPct(f.rentab,1):dash()}</td></tr>`).join('');
+  const totRow = `<tr class="tot">
+      <td class="l">TOTAL — Portfólio (${plural(F.length,'flight','flights')})</td>
+      <td><span class="cell-code">—</span></td>
+      <td>${fmtBRL0(t.budget)}</td><td>${fmtInt(t.impr)}</td><td>${fmtInt(t.clicks)}</td>
+      <td>${fmtPct(t.ctr)}</td><td>${fmtBRL(t.cpc)}</td><td>${fmtBRL(t.cpm_ef)}</td>
+      <td>${t.rentab!=null?fmtPct(t.rentab,1):dash()}</td></tr>`;
+
+  return head + kg + `
+  <div class="panel reveal">
+    <div class="panel-h"><div><div class="panel-t">Desempenho por flight</div>
+      <div class="panel-st">Linha do tempo da jornada ${CFG.cliente} × HYPR</div></div></div>
+    ${buildTimeline(F)}
+  </div>
+
+  <div class="panel reveal">
+    <div class="panel-h"><div><div class="panel-t">Tabela geral</div>
+      <div class="panel-st">Um flight por linha · totais do portfólio no rodapé</div></div></div>
+    <div class="tbl-wrap"><table class="dt">
+      <thead><tr><th class="l">Campanha</th><th>Código</th><th>Budget</th><th>Impressões</th>
+        <th>Cliques</th><th>CTR</th><th>CPC</th><th>CPM ef.</th><th>Rentab.</th></tr></thead>
+      <tbody>${rows}${totRow}</tbody></table></div>
+  </div>
+
+  ${DATA.features.length?`<div class="panel reveal">
+    <div class="panel-h"><div><div class="panel-t">Features ativadas — resultados consolidados</div>
+      <div class="panel-st">Recorte da entrega: não somam ao total do portfólio</div></div></div>
+    <div class="det-feat">${buildFeatCards()}</div>
+  </div>`:''}
+
+  ${buildInconsistencias()}`;
+}
+
+function buildInconsistencias(){
+  const items = DATA.inconsistencias;
+  if(!items.length) return '';
+  return `<div class="panel reveal">
+    <div class="panel-h"><div><div class="panel-t">Pontos de atenção & inconsistências</div>
+      <div class="panel-st">Exibidos com transparência — divergências entre resumo e pós-venda</div></div></div>
+    <div class="note-grid">${items.map((it,i)=>`<div class="note">
+      <strong>${i+1}. ${esc(it[0])}</strong> &nbsp;<span class="chip">${esc(it[1])}</span><br>${esc(it[2])}</div>`).join('')}</div>
+  </div>`;
+}
+
+/* ============================================================
+   9. CAMPANHAS (hub + detalhe)
+   ============================================================ */
+function firstCreativeFor(creativeCamp){
+  const list = DATA.creatives.filter(c=>c.camp===creativeCamp && c.type==="image");
+  const pref = list.find(c=>c.size==="970x250") || list.find(c=>c.size==="728x90")
+    || list.find(c=>c.size==="300x250") || list.find(c=>c.size==="1200x628") || list[0];
+  return pref ? pref.src : null;
+}
+function coverInitials(name){
+  return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('');
+}
+function buildCampBox(f){
+  const cover = firstCreativeFor(f.creativeCamp);
+  const nCre  = DATA.creatives.filter(c=>c.camp===f.creativeCamp).length;
+  const nFeat = DATA.features.filter(ft=>String(ft.code).includes(f.code)).length;
+  return `<button class="campbox reveal" data-flight="${esc(f.code)}">
+    <div class="campbox-top${cover?'':' ph'}">
+      ${cover?`<img src="${cover}" alt="">`:`<span class="campbox-ph-txt">${esc(coverInitials(f.camp))}</span>`}
+      <span class="campbox-vert">${esc(f.vert)}</span>
+      <span class="campbox-code">${esc(f.code)}</span>
+    </div>
+    <div class="campbox-body">
+      <div class="campbox-name">${esc(f.camp)}${f.prelim?'<span class="chip prelim" style="margin-left:6px">preliminar</span>':''}</div>
+      <div class="campbox-per">${esc(f.mes)} · ${esc(f.periodo)}</div>
+      <div class="campbox-mini">
+        <div class="cm"><div class="cm-v urb">${fmtMi(f.impr)}</div><div class="cm-l">impressões</div></div>
+        <div class="cm"><div class="cm-v urb">${fmtInt(f.clicks)}</div><div class="cm-l">cliques</div></div>
+        <div class="cm"><div class="cm-v urb">${nCre||'—'}</div><div class="cm-l">criativos</div></div>
+        <div class="cm"><div class="cm-v urb">${nFeat||'—'}</div><div class="cm-l">features</div></div>
+      </div>
+      <div class="campbox-go">Ver campanha <span>→</span></div>
+    </div></button>`;
+}
+
+let campFilter = {vert:'all', mes:'all'};
+function buildCampanhasHub(){
+  const F = DATA.flights;
+  const head = secHead({
+    eyebrow:'02 · Entregas',
+    title:'Campanhas <b>Ativadas</b>',
+    sub: F.length
+      ? `${plural(F.length,'flight','flights')} ao longo de ${plural([...new Set(F.map(f=>f.camp))].length,'campanha','campanhas')}. Clique em qualquer uma para ver os dados daquele flight, os criativos veiculados e os resultados das features ativadas.`
+      : `Cada campanha do ${CFG.cliente} entra aqui como um flight — com métricas, criativos e features próprios.`
+  });
+  if(!F.length){
+    return head + emptyState('🎯','Nenhuma campanha carregada',
+      'Preencha uma linha da aba “Campanha (flight)” do template por entrega. Cada flight vira um card aqui, com página de detalhe própria.');
+  }
+  campFilter = {vert:'all', mes:'all'};
+  const verts = [...new Set(F.map(f=>f.vert))].sort();
+  const meses = [...new Set(F.map(f=>f.mes))];
+  const vertPills = `<button class="pill act" data-cf="vert" data-cv="all">Todas</button>` +
+    verts.map(v=>`<button class="pill" data-cf="vert" data-cv="${esc(v)}">${esc(v)}</button>`).join('');
+  const mesPills = `<button class="pill act" data-cf="mes" data-cv="all">Todos</button>` +
+    meses.map(m=>`<button class="pill" data-cf="mes" data-cv="${esc(m)}">${esc(m)}</button>`).join('');
+
+  return head + `
+  <div class="filters" style="position:static;margin-bottom:20px">
+    <div class="filter-row"><span class="filter-lbl">${CFG.vertLabel}</span><div class="pills" id="vertPills">${vertPills}</div></div>
+    <div class="filter-row"><span class="filter-lbl">Mês de início</span><div class="pills" id="mesPills">${mesPills}</div></div>
+  </div>
+  <div class="campgrid" id="campgrid">${F.map(buildCampBox).join('')}</div>`;
+}
+
+function buildFlightDetail(code){
+  const f = DATA.flights.find(x=>x.code===code);
+  if(!f) return buildCampanhasHub();
+  const cre   = DATA.creatives.filter(c=>c.camp===f.creativeCamp);
+  const feats = DATA.features.filter(ft=>String(ft.code).includes(code));
+  const auds  = DATA.audiences.filter(a=>String(a.code).includes(code));
+
+  const kpis = [
+    {l:"Impressões visíveis", v:fmtInt(f.impr), imp:1},
+    {l:"Cliques", v:fmtInt(f.clicks)},
+    {l:"CTR", v:fmtPct(f.ctr)},
+    {l:"CPC", v:fmtBRL(f.cpc)},
+    {l:"CPM efetivo", v:fmtBRL(f.cpm_ef)},
+    {l:"Budget contratado", v:fmtBRL0(f.budget), imp:1},
+  ];
+  if(f.rentab!=null) kpis.push({l:"Rentabilidade CPM", v:fmtPct(f.rentab,1)});
+  if(f.video){
+    kpis.push({l:"Views completos (vídeo)", v:fmtInt(f.v_views), imp:1});
+    kpis.push({l:"VTR (vídeo)", v:fmtPct(f.v_vtr)});
+  }
+  const kg = kpis.map((k,i)=>`<div class="kcard reveal ${k.imp?'imp':''}" style="transition-delay:${i*40}ms">
+    <div class="kc-l">${k.l}</div><div class="kc-v urb">${k.v}</div></div>`).join('');
+
+  const featHtml = feats.length ? feats.map(ft=>{
+    let rows = "";
+    if(ft.vi!=null)     rows += `<div class="featcard-row"><span class="k">Impr. visíveis</span><span class="v">${fmtInt(ft.vi)}</span></div>`;
+    if(ft.clicks!=null) rows += `<div class="featcard-row"><span class="k">Cliques</span><span class="v">${fmtInt(ft.clicks)}</span></div>`;
+    if(ft.ctr!=null)    rows += `<div class="featcard-row"><span class="k">CTR</span><span class="v">${fmtPct(ft.ctr)}</span></div>`;
+    if(ft.plays!=null)  rows += `<div class="featcard-row"><span class="k">Plays (PDOOH)</span><span class="v">${fmtInt(ft.plays)}</span></div>`;
+    return `<div class="featcard"><div class="featcard-n">${esc(ft.feat)}</div>${rows}
+      ${ft.obs?`<div class="featcard-obs">${esc(ft.obs)}</div>`:''}</div>`;
+  }).join('') : `<div class="note">Nenhuma feature registrada para este flight.</div>`;
+
+  const creHtml = cre.length
+    ? `<div class="cgrid">${cre.map(renderCreativeCard).join('')}</div>`
+    : `<div class="note">Sem criativos catalogados para este flight.</div>`;
+
+  const audHtml = auds.length
+    ? `<div class="panel reveal"><div class="panel-h"><div><div class="panel-t">Audiências</div>
+        <div class="panel-st">${plural(auds.length,'segmento','segmentos')} neste flight</div></div></div>
+        ${audTable(auds)}</div>` : '';
+
+  return secHead({
+      back:'campanhas', backLabel:'Todas as campanhas',
+      eyebrow: esc(f.vert),
+      title: esc(f.camp),
+      sub: `<span class="cell-code" style="font-size:13px">${esc(f.code)}</span> · ${esc(f.mes)} · ${esc(f.periodo)}`
+    }) + `
+  <div class="kgrid">${kg}</div>
+  ${f.prelim?`<div class="note"><strong>Campanha em curso.</strong> Os dados de ${esc(f.camp)} (${esc(f.periodo)}) são preliminares — o fechamento ainda não ocorreu.</div>`:''}
+  <div class="panel reveal">
+    <div class="panel-h"><div><div class="panel-t">Features ativadas</div></div></div>
+    <div class="det-feat">${featHtml}</div>
+  </div>
+  ${audHtml}
+  <div class="panel reveal">
+    <div class="panel-h"><div><div class="panel-t">Criativos veiculados</div>
+      <div class="panel-st">${plural(cre.length,'peça nesta campanha','peças nesta campanha')}</div></div></div>
+    ${creHtml}
+  </div>`;
+}
+
+/* ============================================================
+   10. AUDIÊNCIAS
+   Seção própria: categorias/segmentos entregues, separados das
+   capabilities HYPR (que ficam em features[]).
+   ============================================================ */
+let audFilter = 'all';
+function audTable(A){
+  return `<div class="tbl-wrap"><table class="dt">
+    <thead><tr><th class="l">Audiência</th><th>Código</th><th>Impressões</th><th>Cliques</th><th>CTR</th><th>VTR</th></tr></thead>
+    <tbody>${A.map(a=>`<tr>
+      <td class="l"><b>${esc(a.aud)}</b><span class="cell-vert">${esc(a.camp||'')}</span></td>
+      <td><span class="cell-code">${esc(String(a.code||'').split(' · ')[0])}</span></td>
+      <td class="imp-col">${a.vi!=null?fmtInt(a.vi):dash()}</td>
+      <td>${a.clicks!=null?fmtInt(a.clicks):dash()}</td>
+      <td>${a.ctr!=null?fmtPct(a.ctr):dash()}</td>
+      <td>${a.vtr!=null?fmtPct(a.vtr):dash()}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function buildAudiencias(){
+  const A = DATA.audiences;
+  const head = secHead({
+    eyebrow:'03 · Segmentação',
+    title:'<b>Audiências</b>',
+    sub:`Desempenho por segmento e categoria nas campanhas do ${CFG.cliente}. As capabilities da HYPR (Downloaded Apps, Topics, Tap-to-Map, PDOOH…) ficam em Features — aqui entram os públicos entregues.`
+  });
+  if(!A.length){
+    return head + emptyState('👥','Nenhuma audiência carregada',
+      'Cada segmento do bloco AUDIENCES do resumo de campanha vira uma linha aqui — impressões, cliques, CTR e VTR por público, com ranking e comparação entre campanhas.');
+  }
+  const filtered = audFilter==='all' ? A : A.filter(a=>a.camp===audFilter);
+  const camps = [...new Set(A.map(a=>a.camp))];
+  const pills = `<button class="pill act" data-af="all">Todas<span class="ct">${A.length}</span></button>` +
+    camps.map(c=>`<button class="pill" data-af="${esc(c)}">${esc(c)}<span class="ct">${A.filter(a=>a.camp===c).length}</span></button>`).join('');
+
+  const max = Math.max(...filtered.map(a=>Number(a.vi)||0), 1);
+  const cards = [...filtered].sort((a,b)=>(Number(b.vi)||0)-(Number(a.vi)||0)).map((a,i)=>`
+    <div class="audcard reveal" style="transition-delay:${i*40}ms">
+      <div class="audcard-n">${esc(a.aud)}</div>
+      <div class="audcard-c">${esc(a.camp||'')}</div>
+      <div class="audbar"><span style="width:${((Number(a.vi)||0)/max*100).toFixed(1)}%"></span></div>
+      <div class="audcard-row"><span class="k">Impressões</span><span class="v">${a.vi!=null?fmtInt(a.vi):'—'}</span></div>
+      <div class="audcard-row"><span class="k">Cliques</span><span class="v">${a.clicks!=null?fmtInt(a.clicks):'—'}</span></div>
+      <div class="audcard-row"><span class="k">CTR</span><span class="v">${a.ctr!=null?fmtPct(a.ctr):'—'}</span></div>
+      ${a.vtr!=null?`<div class="audcard-row"><span class="k">VTR</span><span class="v">${fmtPct(a.vtr)}</span></div>`:''}
+      ${a.obs?`<div class="featcard-obs">${esc(a.obs)}</div>`:''}
+    </div>`).join('');
+
+  return head + `
+  <div class="filters" style="position:static;margin-bottom:20px">
+    <div class="filter-row"><span class="filter-lbl">Campanha</span><div class="pills" id="audPills">${pills}</div></div>
+  </div>
+  <div class="audgrid" id="audgrid">${cards}</div>
+  <div class="panel reveal">
+    <div class="panel-h"><div><div class="panel-t">Todas as audiências</div>
+      <div class="panel-st">${plural(filtered.length,'segmento','segmentos')} exibidos</div></div></div>
+    ${audTable(filtered)}
+  </div>`;
+}
+
+/* ============================================================
+   11. CENTRAL DE CRIATIVOS
+   ============================================================ */
+let cvFilter = {size:"all", camp:"all", feat:"all"};
+function renderCreativeCard(c){
+  if(c.type==="image"){
+    const tall = (c.h && c.w && c.h/c.w > 2.2) ? "tall" : "";
+    return `<div class="ccard" data-cre>
+      <div class="ccard-media ${tall}">
+        <span class="ccard-type">Display</span>
+        <img loading="lazy" src="${c.src}" alt="${esc(c.camp)} ${esc(c.size_label)}">
+      </div>
+      <div class="ccard-body">
+        <div class="ccard-camp">${esc(c.camp)}</div>
+        <div class="ccard-meta"><span class="sz">${esc(c.size_label)}</span>${c.fmt?`<span>· ${esc(c.fmt)}</span>`:''}</div>
+      </div></div>`;
+  }
+  if(c.type==="video"){
+    return `<div class="ccard" data-cre>
+      <div class="media-lazy" data-vsrc="${c.src}">
+        <span class="ccard-type vid">Vídeo</span>
+        <div class="play"><svg viewBox="0 0 24 24" fill="#12121C"><path d="M8 5v14l11-7z"/></svg></div>
+        <span class="hint">tocar prévia</span>
+      </div>
+      <div class="ccard-body">
+        <div class="ccard-camp">${esc(c.name)}</div>
+        <div class="ccard-meta"><span class="sz">${esc(c.size_label)}</span></div>
+      </div></div>`;
+  }
+  if(c.type==="iframe"){
+    return `<div class="ccard" data-cre>
+      <div class="media-lazy" data-ifr="${encodeURIComponent(c.src)}" style="min-height:300px">
+        <span class="ccard-type ifr">Interativo</span>
+        <div class="play"><svg viewBox="0 0 24 24" fill="#12121C"><path d="M8 5v14l11-7z"/></svg></div>
+        <span class="hint">abrir peça interativa</span>
+      </div>
+      <div class="ccard-body">
+        <div class="ccard-camp">${esc(c.name)}</div>
+        <div class="ccard-meta"><span class="sz">${esc(c.size_label)}</span></div>
+      </div></div>`;
+  }
+  return "";
+}
+function buildCriativos(){
+  const C = DATA.creatives;
+  const head = secHead({
+    eyebrow:'04 · Peças',
+    title:'Central de <b>Criativos</b>',
+    sub: C.length
+      ? `${plural(C.length,'peça veiculada','peças veiculadas')} nas campanhas ${CFG.cliente} × HYPR — imagens, vídeos e formatos interativos. Filtre por tamanho ou por campanha.`
+      : `Galeria das peças veiculadas nas campanhas do ${CFG.cliente}.`
+  });
+  if(!C.length){
+    return head + emptyState('🎨','Nenhum criativo carregado',
+      'Envie um .zip por campanha com as dimensões no nome de cada arquivo (ex.: ml_datadupla_970x250.gif). Imagens entram embutidas no próprio arquivo; vídeos ficam hospedados em videos/ e interativos entram por link de embed.');
+  }
+  const sizeCounts = {}, campCounts = {};
+  C.forEach(c=>{ sizeCounts[c.size]=(sizeCounts[c.size]||0)+1; campCounts[c.camp]=(campCounts[c.camp]||0)+1; });
+  const sizes = Object.keys(sizeCounts).sort((a,b)=>{
+    const [aw,ah]=a.split("x").map(Number),[bw,bh]=b.split("x").map(Number);
+    return (bw*bh)-(aw*ah);
+  });
+  const camps = Object.keys(campCounts).sort();
+  const sizePills = `<button class="pill act" data-f="size" data-v="all">Todos<span class="ct">${C.length}</span></button>` +
+    sizes.map(s=>`<button class="pill" data-f="size" data-v="${esc(s)}">${esc(s.replace("x","×"))}<span class="ct">${sizeCounts[s]}</span></button>`).join('');
+  const campPills = `<button class="pill act" data-f="camp" data-v="all">Todas<span class="ct">${C.length}</span></button>` +
+    camps.map(s=>`<button class="pill" data-f="camp" data-v="${esc(s)}">${esc(s)}<span class="ct">${campCounts[s]}</span></button>`).join('');
+
+  return head + `
+  <div class="filters">
+    <div class="filter-row"><span class="filter-lbl">Campanha</span><div class="pills" id="campPills">${campPills}</div></div>
+    <div class="filter-row"><span class="filter-lbl">Tipo</span><div class="pills" id="featPills">
+      <button class="pill" data-f="feat" data-v="feat">Interativos / Features</button></div></div>
+    <div class="filter-row"><span class="filter-lbl">Tamanho do criativo</span><div class="pills" id="sizePills">${sizePills}</div></div>
+  </div>
+  <div class="cv-count" id="cvCount"></div>
+  <div class="cgrid" id="cgrid"></div>`;
+}
+function renderCreativeGrid(){
+  const grid = document.getElementById("cgrid");
+  if(!grid) return;
+  const C = DATA.creatives.filter(c=>
+    (cvFilter.size==="all"||c.size===cvFilter.size) &&
+    (cvFilter.camp==="all"||c.camp===cvFilter.camp) &&
+    (cvFilter.feat!=="feat"||(c.feature===true||c.type==="iframe")));
+  grid.innerHTML = C.map(renderCreativeCard).join('') ||
+    `<div class="note">Nenhum criativo para esta combinação de filtros.</div>`;
+  const ct = document.getElementById("cvCount");
+  if(ct) ct.innerHTML = `<b>${C.length}</b> ${C.length===1?'criativo exibido':'criativos exibidos'}`;
+}
+
+/* ============================================================
+   12. BRAND-LIFT
+   ============================================================ */
+let blState = {wave:"all"};
+let blChart = null;
+function buildBrandlift(){
+  const BL = DATA.brandlift;
+  const head = secHead({
+    eyebrow:'05 · Percepção',
+    title:'<b>Brand-Lift</b>',
+    sub:'Pesquisas de percepção conduzidas durante as campanhas. Cada onda compara um grupo <strong>exposto</strong> aos criativos HYPR com um <strong>grupo controle</strong> do mesmo público não impactado.'
+  });
+  if(!BL.length){
+    return head + emptyState('📈','Nenhuma onda de survey carregada',
+      'Para cada survey, precisamos do enunciado da pergunta, das opções de resposta, do percentual no grupo exposto e no controle e do n de cada grupo. O gráfico exposto × controle e os cards de lift são gerados a partir disso.');
+  }
+  const wavePills = `<button class="pill act" data-bl="all">Todas as Surveys</button>` +
+    BL.map(w=>`<button class="pill" data-bl="${esc(w.code)}">${esc(w.wave)} · ${esc(String(w.camp).split(' · ')[0])}</button>`).join('');
+
+  const cards = BL.map(w=>{
+    const head2 = w.rows.find(r=>r.r==="Sim"||r.r==="Muito provável") || w.rows[0];
+    const pos = head2.lift_pp >= 0;
+    return `<div class="blc reveal">
+      <div class="blc-w">${esc(w.wave)} · ${esc(w.type)}</div>
+      <div class="blc-camp">${esc(w.camp)}</div>
+      <div class="blc-v ${pos?'pos':'neg'} urb">${pos?'+':''}${head2.lift_pp.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})} pp</div>
+      <div class="blc-r">lift em “${esc(head2.r)}”</div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <div style="flex:1;background:var(--glass2);border-radius:9px;padding:7px 10px;text-align:center">
+          <div class="urb" style="font-weight:800;font-size:16px;color:var(--ac)">${w.nExp}</div>
+          <div class="filter-lbl">Exposto</div></div>
+        <div style="flex:1;background:var(--glass2);border-radius:9px;padding:7px 10px;text-align:center">
+          <div class="urb" style="font-weight:800;font-size:16px;color:var(--tm)">${w.nCtrl}</div>
+          <div class="filter-lbl">Controle</div></div>
+      </div></div>`;
+  }).join('');
+
+  return head + `
+  <div class="panel">
+    <div class="bl-controls">
+      <div class="bl-cg"><span class="filter-lbl">Survey</span><div class="pills" id="blPills">${wavePills}</div></div>
+    </div>
+    <div class="panel-h"><div><div class="panel-t" id="blTitle">Lift por resposta — todas as Surveys</div>
+      <div class="panel-st">Diferença percentual (exposto − controle), em pontos percentuais</div></div>
+      <div class="bl-legend">
+        <div class="bl-leg"><span class="dot" style="background:#FFE600"></span>Exposto</div>
+        <div class="bl-leg"><span class="dot" style="background:rgba(255,255,255,.3)"></span>Controle</div>
+      </div></div>
+    <div class="chartwrap"><canvas id="blCanvas"></canvas></div>
+  </div>
+  <div class="bl-cards">${cards}</div>
+  <div class="note" style="margin-top:24px"><strong>Metodologia:</strong> o brand-lift mede a diferença na taxa de resposta entre o grupo exposto e o controle. Valores positivos indicam ganho a favor do grupo exposto.</div>`;
+}
+function renderBLChart(){
+  const canvas = document.getElementById("blCanvas");
+  if(!canvas || typeof Chart === "undefined" || !DATA.brandlift.length) return;
+  const BL = blState.wave==="all" ? DATA.brandlift : DATA.brandlift.filter(w=>w.code===blState.wave);
+  if(!BL.length) return;
+  let labels=[], exp=[], ctrl=[];
+  const title = document.getElementById("blTitle");
+  if(BL.length===1){
+    const w = BL[0];
+    w.rows.forEach(r=>{ labels.push(r.r); exp.push(+(r.exp*100).toFixed(1)); ctrl.push(+(r.ctrl*100).toFixed(1)); });
+    if(title) title.textContent = `${w.wave} · ${w.camp} — exposto vs. controle (% por resposta)`;
+  } else {
+    BL.forEach(w=>{
+      const h = w.rows.find(r=>r.r==="Sim"||r.r==="Muito provável") || w.rows[0];
+      labels.push(`${w.wave}\n${h.r}`); exp.push(+(h.exp*100).toFixed(1)); ctrl.push(+(h.ctrl*100).toFixed(1));
+    });
+    if(title) title.textContent = "Resposta positiva por onda — exposto vs. controle (%)";
+  }
+  if(blChart) blChart.destroy();
+  blChart = new Chart(canvas.getContext("2d"), {
+    type:"bar",
+    data:{labels,datasets:[
+      {label:"Exposto",  data:exp,  backgroundColor:"#FFE600", borderRadius:6, maxBarThickness:46},
+      {label:"Controle", data:ctrl, backgroundColor:"rgba(255,255,255,.22)", borderRadius:6, maxBarThickness:46},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:c=>c.dataset.label+": "+c.parsed.y.toLocaleString("pt-BR",{minimumFractionDigits:1})+"%"}}},
+      scales:{
+        x:{ticks:{color:"rgba(255,255,255,.55)",font:{family:"DM Sans",size:11},
+            callback:function(v){return this.getLabelForValue(v).split("\n");}}, grid:{display:false}},
+        y:{ticks:{color:"rgba(255,255,255,.4)",font:{family:"Space Mono",size:10},callback:v=>v+"%"},
+           grid:{color:"rgba(255,255,255,.06)"},beginAtZero:true}}}
+  });
+}
+
+/* ============================================================
+   13. HUB DE MATERIAIS
+   ============================================================ */
+let matFilter = 'all';
+function matDateOrder(title){
+  const months={jan:1,fev:2,mar:3,abr:4,mai:5,jun:6,jul:7,ago:8,set:9,out:10,nov:11,dez:12};
+  const m = String(title).toLowerCase().match(/\/?(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\/?(\d{2})/);
+  if(!m) return 0;
+  return (parseInt(m[2],10)+2000)*100 + (months[m[1]]||0);
+}
+function renderMatGrid(){
+  const grid = document.getElementById('matGrid');
+  if(!grid) return;
+  const cats = DATA.materiais.filter(c=>matFilter==='all' || c.id===matFilter);
+  let items = [];
+  cats.forEach(cat=>cat.items.forEach(item=>items.push({cat,item})));
+  items.sort((a,b)=>matDateOrder(b.item.title)-matDateOrder(a.item.title));
+  grid.innerHTML = items.map(({cat,item})=>`
+    <div class="matcard reveal" data-mat-cat="${cat.id}">
+      <div class="matcard-thumb">
+        <img src="https://drive.google.com/thumbnail?id=${item.id}&sz=w400" alt="${esc(item.title)}"
+          onerror="this.style.display='none';this.parentElement.style.background='var(--glass2)'">
+        <span class="matcard-tag">${cat.ic} ${esc(cat.label)}</span>
+      </div>
+      <div class="matcard-body">
+        <div class="matcard-t">${esc(item.title)}</div>
+        <a class="matcard-btn" href="https://docs.google.com/presentation/d/${item.id}/edit" target="_blank" rel="noopener">Abrir apresentação ↗</a>
+      </div>
+    </div>`).join('') || `<div class="note">Nenhum material nesta categoria.</div>`;
+  initReveal();
+}
+function buildMateriais(){
+  const total = DATA.materiais.reduce((a,c)=>a+c.items.length,0);
+  const head = secHead({
+    eyebrow:'06 · Biblioteca',
+    title:'Hub de <b>Materiais</b>',
+    sub:`Pós-vendas, estudos e audience discovery produzidos pela HYPR ao longo da parceria com o ${CFG.cliente}.`
+  });
+  if(!total){
+    return head + emptyState('📁','Biblioteca ainda vazia',
+      'A seção já está pronta: cada pós-venda, estudo ou audience discovery vira um card com thumbnail e link direto para o Google Slides. Basta que os arquivos estejam compartilhados como “qualquer pessoa com o link”.',
+      'nesta V1, por combinação');
+  }
+  const pills = `<button class="pill act" data-mc="all">Todos<span class="ct">${total}</span></button>` +
+    DATA.materiais.filter(c=>c.items.length).map(c=>
+      `<button class="pill" data-mc="${c.id}">${c.ic} ${esc(c.label)}<span class="ct">${c.items.length}</span></button>`).join('');
+  return head + `
+  <div class="filters" style="position:static;margin-bottom:20px">
+    <div class="filter-row"><span class="filter-lbl">Categoria</span><div class="pills" id="matFilters">${pills}</div></div>
+  </div>
+  <div class="matgrid" id="matGrid"></div>`;
+}
+
+/* ============================================================
+   14. INIT + EVENTOS
+   ============================================================ */
+function renderAll(){
+  TOT = computeTotals();
+  renderHub();
+  document.getElementById("consolidado-body").innerHTML = buildConsolidado();
+  document.getElementById("campanhas-body").innerHTML   = buildCampanhasHub();
+  document.getElementById("audiencias-body").innerHTML  = buildAudiencias();
+  document.getElementById("criativos-body").innerHTML   = buildCriativos();
+  document.getElementById("brandlift-body").innerHTML   = buildBrandlift();
+  document.getElementById("materiais-body").innerHTML   = buildMateriais();
+  renderCreativeGrid();
+  renderMatGrid();
+  initReveal();
+}
+renderAll();
+
+/* filtro de campanhas */
+document.addEventListener('click', e=>{
+  const p = e.target.closest('.pill[data-cf]');
+  if(!p) return;
+  campFilter[p.dataset.cf] = p.dataset.cv;
+  p.closest('.pills').querySelectorAll('.pill').forEach(x=>x.classList.remove('act'));
+  p.classList.add('act');
+  const F2 = DATA.flights.filter(f=>
+    (campFilter.vert==='all'||f.vert===campFilter.vert) &&
+    (campFilter.mes==='all'||f.mes===campFilter.mes));
+  const cg = document.getElementById('campgrid');
+  if(cg){ cg.innerHTML = F2.map(buildCampBox).join('') || `<div class="note">Nenhuma campanha para este filtro.</div>`; initReveal(); }
+});
+
+/* detalhe do flight */
+document.addEventListener("click", e=>{
+  const fb = e.target.closest("[data-flight]");
+  if(fb){
+    document.getElementById("campanhas-body").innerHTML = buildFlightDetail(fb.dataset.flight);
+    go("campanhas");
+  }
+});
+/* voltar para o hub de campanhas reconstrói a lista */
+document.addEventListener("click", e=>{
+  const back = e.target.closest('.sec-back[data-go="campanhas"]');
+  const home = e.target.closest('[data-go="campanhas"]:not(.sec-back)');
+  if(back || (home && !e.target.closest('[data-flight]'))){
+    document.getElementById("campanhas-body").innerHTML = buildCampanhasHub();
+    initReveal();
+  }
+});
+
+/* filtros de criativos */
+document.addEventListener("click", e=>{
+  const p = e.target.closest(".pill[data-f]");
+  if(!p) return;
+  const newVal = (cvFilter[p.dataset.f] === p.dataset.v && p.dataset.v !== 'all') ? 'all' : p.dataset.v;
+  cvFilter[p.dataset.f] = newVal;
+  const group = p.dataset.f==="size" ? "sizePills" : (p.dataset.f==="camp" ? "campPills" : "featPills");
+  const g = document.getElementById(group);
+  if(g) g.querySelectorAll(".pill").forEach(x=>x.classList.remove("act"));
+  if(newVal !== 'all' || p.dataset.v === 'all') p.classList.add("act");
+  renderCreativeGrid();
+});
+
+/* filtro de audiências */
+document.addEventListener("click", e=>{
+  const p = e.target.closest(".pill[data-af]");
+  if(!p) return;
+  audFilter = p.dataset.af;
+  document.getElementById("audiencias-body").innerHTML = buildAudiencias();
+  initReveal();
+});
+
+/* filtro de materiais */
+document.addEventListener("click", e=>{
+  const p = e.target.closest(".pill[data-mc]");
+  if(!p) return;
+  matFilter = p.dataset.mc;
+  document.querySelectorAll('#matFilters .pill').forEach(x=>x.classList.remove('act'));
+  p.classList.add('act');
+  renderMatGrid();
+});
+
+/* ondas de brand-lift */
+document.addEventListener("click", e=>{
+  const p = e.target.closest(".pill[data-bl]");
+  if(!p) return;
+  blState.wave = p.dataset.bl;
+  document.getElementById("blPills").querySelectorAll(".pill").forEach(x=>x.classList.remove("act"));
+  p.classList.add("act");
+  renderBLChart();
+});
+
+/* vídeo / iframe sob demanda (não baixa nada até o clique) */
+document.addEventListener("click", e=>{
+  const lz = e.target.closest(".media-lazy");
+  if(!lz) return;
+  if(lz.dataset.vsrc){
+    const src = lz.dataset.vsrc;
+    lz.outerHTML = (/\.mp4(\?|$)/i.test(src) || src.startsWith("data:video"))
+      ? `<video class="media-frame" src="${src}" height="220" controls autoplay playsinline style="width:100%;background:#000"></video>`
+      : `<iframe class="media-frame" src="${src}" height="220" allow="autoplay; fullscreen" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+  } else if(lz.dataset.ifr){
+    lz.outerHTML = `<iframe class="media-frame" src="${decodeURIComponent(lz.dataset.ifr)}" height="420" allow="geolocation; clipboard-write" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+  }
+});
+
+/* stickiness dos cards da timeline */
+let tlActiveCard = null;
+document.addEventListener('mouseover', e=>{
+  const dot = e.target.closest('.tl-dot');
+  if(dot){
+    const card = dot.querySelector('.tl-card');
+    if(card){ card.style.opacity='1'; card.style.pointerEvents='auto'; tlActiveCard = card; }
+  }
+  const card = e.target.closest('.tl-card');
+  if(card){ card.style.opacity='1'; card.style.pointerEvents='auto'; tlActiveCard = card; }
+});
+document.addEventListener('mouseout', e=>{
+  const dot    = e.target.closest('.tl-dot');
+  const toCard = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.tl-card');
+  const toDot  = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.tl-dot');
+  if(dot && !toCard && !toDot){
+    const card = dot.querySelector('.tl-card');
+    if(card){ card.style.opacity=''; card.style.pointerEvents=''; }
+  }
+  const card = e.target.closest('.tl-card');
+  if(card && !toDot && !toCard){ card.style.opacity=''; card.style.pointerEvents=''; }
+});
+</script>
+</body>
+</html>

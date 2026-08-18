@@ -1,0 +1,3 @@
+# Vídeos das campanhas (MP4, H.264/AAC).
+# Referenciados por /videos/<arquivo>.mp4 em DATA.creatives[].src
+# A rota no vercel.json precisa vir ANTES do catch-all.
