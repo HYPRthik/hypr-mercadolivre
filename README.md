@@ -13,15 +13,43 @@ Nada é inventado: nenhum número aparece no dashboard sem estar no `DATA`.
 | Consolidado Geral | `consolidado` | 6 flights |
 | Campanhas Ativadas | `campanhas` | 6 flights |
 | Audiências | `audiencias` | 47 segmentos |
-| Central de Criativos | `criativos` | pronta · aguardando peças |
-| Brand-Lift | `brandlift` | pronta · aguardando surveys |
+| Central de Criativos | `criativos` | 21 peças (15 estáticas + 6 vídeos) |
+| Brand-Lift | `brandlift` | 15 surveys |
 | Hub de Materiais | `materiais` | 6 pós-vendas (PDF no Drive) |
 
 Todas as campanhas carregadas: Dia do Consumidor (PI 001/2026), Same Day (002),
 Copa do Mundo (003), 7.7 (004), DDP + 8.8 (005) e DDP Contextual (008).
 
-Falta só a **logo oficial do Mercado Livre** (`BRAND.logo` segue `null`, com um
-wordmark tipográfico provisório no lugar) e os **criativos**.
+Falta só a **logo oficial do Mercado Livre** — `BRAND.logo` segue `null`, com um
+wordmark tipográfico provisório no lugar.
+
+## Brand-Lift: como ler os pós-vendas
+
+Os números de survey vêm dos PDFs de pós-venda, não dos resumos. O gráfico é de
+barras horizontais, então a posição x de cada percentual reflete o tamanho da
+barra, não a coluna — quem separa exposto de controle é a posição vertical.
+
+⚠️ **A ordem vertical não é a mesma em todos os decks.** Em 7.7, Copa do Mundo e
+Same Day a barra de cima é o exposto; em DDP + 8.8 e DDP Contextual é o
+controle. Nunca deduza pela posição: use as duas conferências abaixo, que
+juntas determinam a atribuição sem ambiguidade.
+
+```
+Σ exposto  ≈ 100%   e   Σ controle ≈ 100%
+lift em p.p. e em % da resposta principal == valores impressos no pós-venda
+```
+
+A resposta que ancora o lift muda: normalmente é uma só ("Sim", "Mercado Livre",
+"Muito provável"), mas na Intenção do DDP + 8.8 é a soma dos dois primeiros
+níveis ("Muito provável + Provável"). O campo `head` de cada survey guarda qual
+resposta ancora e os dois valores publicados, e é isso que o card exibe — o
+dashboard mostra o número do pós-venda, não um recálculo.
+
+Também vale para a extração: `pdfplumber` quebra alguns rótulos em caracteres
+soltos (o "6,9%" de "Pouco provável"), e nas páginas com duas pesquisas lado a
+lado (DDP + 8.8, DDP Contextual) o texto das duas se entrelaça — nesses casos
+separe pela coordenada x. No Dia do Consumidor os percentuais estão dentro de
+uma imagem, sem camada de texto; foi preciso renderizar a página.
 
 Sem gate de e-mail e sem telemetria nesta versão (decisão do cliente). Para
 religar, reintroduzir `#email-gate` + `initGate/submitGate` e um Apps Script
@@ -166,6 +194,28 @@ Assim que o arquivo oficial da logo chegar, basta preencher `BRAND.logo` com um
 | Imagem (JPG/PNG/GIF) | `data:` URI base64 no `DATA` |
 | Vídeo (MP4, H.264/AAC) | arquivo em `videos/` + caminho `/videos/x.mp4` |
 | Interativo | URL de **embed** em `<iframe>` |
+
+Vídeo novo: remuxe com faststart antes de commitar, senão o navegador precisa
+de uma requisição extra no fim do arquivo antes de conseguir tocar.
+
+```bash
+ffmpeg -i entrada.mp4 -c copy -movflags +faststart saida.mp4   # sem recodificar
+```
+
+Extraia também um quadro para servir de capa — é o que evita a campanha só de
+vídeo cair no placeholder, já que `firstCreativeFor` procura imagem primeiro:
+
+```bash
+ffmpeg -ss 2 -i video.mp4 -frames:v 1 -vf "scale='min(640,iw)':-2" -q:v 5 capa.jpg
+```
+
+Grave o resultado no campo `poster` do criativo. Use nomes ASCII sem espaço nem
+acento: além do escape na URL, o acento vem em forma decomposta no macOS e
+renomear por literal falha.
+
+⚠️ **Preview de DSP não substitui o arquivo.** O link de preview do DV360 exige
+login na conta do anunciante e manda `X-Frame-Options`, então não embuta: quem
+abrir o dashboard sem estar autenticado vê tela de login, não o criativo.
 
 Acima de ~1 MB, hospede em vez de embutir. O card de preview só baixa o vídeo
 quando o usuário clica.

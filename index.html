@@ -444,6 +444,8 @@ table.dt tr.tot td.l{color:var(--ac)}
 .blc-camp{font-size:11px;color:var(--tm);margin-bottom:9px}
 .blc-v{font-family:'Urbanist',sans-serif;font-weight:800;font-size:26px;line-height:1;margin-bottom:3px}
 .blc-v.pos{color:var(--pos)} .blc-v.neg{color:var(--neg)}
+.blc-q{font-size:10.5px;color:var(--tdim);font-style:italic;line-height:1.4;margin-bottom:10px;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .blc-r{font-size:11px;color:var(--tm)}
 .blc-n{font-size:10px;color:var(--tdim);margin-top:5px}
 
@@ -688,7 +690,23 @@ const DATA = {
 
   /* brandlift[] — ondas de survey.
      Campos: wave, type, vert, camp, code, nExp, nCtrl, rows[]       */
-  brandlift: [],
+  brandlift: [
+    {"wave": "Mar/26", "type": "Consideração", "vert": "Data Comemorativa", "camp": "Dia do Consumidor", "code": "001/2026", "pergunta": "Quais destas lojas on-line você escolheria para fazer compras?", "nExp": 148, "nCtrl": 212, "head": {"r": "Mercado Livre", "lift_pp": 4.0, "lift_pct": 11.1}, "rows": [{"r": "Mercado Livre", "exp": 0.399, "ctrl": 0.359, "lift_pp": 4.0}, {"r": "Magazine Luiza", "exp": 0.196, "ctrl": 0.151, "lift_pp": 4.5}, {"r": "Shopee", "exp": 0.203, "ctrl": 0.316, "lift_pp": -11.3}, {"r": "Amazon", "exp": 0.203, "ctrl": 0.175, "lift_pp": 2.8}]},
+    {"wave": "Jun/26", "type": "Awareness", "vert": "Territórios", "camp": "Same Day", "code": "002/2026", "pergunta": "Você se lembra de ter visto um anúncio do Mercado Livre nos últimos 7 dias?", "nExp": 202, "nCtrl": 621, "head": {"r": "Sim", "lift_pp": 27.0, "lift_pct": 52.7}, "rows": [{"r": "Sim", "exp": 0.782, "ctrl": 0.512, "lift_pp": 27.0}, {"r": "Não", "exp": 0.119, "ctrl": 0.277, "lift_pp": -15.8}, {"r": "Não sei", "exp": 0.099, "ctrl": 0.211, "lift_pp": -11.2}]},
+    {"wave": "Jun/26", "type": "Preferência", "vert": "Territórios", "camp": "Same Day", "code": "002/2026", "pergunta": "Das marcas abaixo, qual você prefere?", "nExp": 211, "nCtrl": 554, "head": {"r": "Mercado Livre", "lift_pp": 23.9, "lift_pct": 70.5}, "rows": [{"r": "Mercado Livre", "exp": 0.578, "ctrl": 0.339, "lift_pp": 23.9}, {"r": "Magazine Luiza", "exp": 0.1, "ctrl": 0.069, "lift_pp": 3.1}, {"r": "Shopee", "exp": 0.1, "ctrl": 0.239, "lift_pp": -13.9}, {"r": "Amazon", "exp": 0.108, "ctrl": 0.171, "lift_pp": -6.3}, {"r": "Nenhuma", "exp": 0.114, "ctrl": 0.182, "lift_pp": -6.8}]},
+    {"wave": "Jun/26", "type": "Intenção", "vert": "Territórios", "camp": "Same Day", "code": "002/2026", "pergunta": "Qual é a probabilidade de você considerar Mercado Livre na próxima vez que quiser comprar online?", "nExp": 230, "nCtrl": 529, "head": {"r": "Muito provável", "lift_pp": 23.4, "lift_pct": 52.2}, "rows": [{"r": "Muito provável", "exp": 0.682, "ctrl": 0.448, "lift_pp": 23.4}, {"r": "Pouco provável", "exp": 0.085, "ctrl": 0.091, "lift_pp": -0.6}, {"r": "Neutro", "exp": 0.104, "ctrl": 0.176, "lift_pp": -7.2}, {"r": "Improvável", "exp": 0.067, "ctrl": 0.07, "lift_pp": -0.3}, {"r": "Muito improvável", "exp": 0.062, "ctrl": 0.215, "lift_pp": -15.3}]},
+    {"wave": "Jun/26", "type": "Awareness", "vert": "Evento", "camp": "Copa do Mundo", "code": "003/2026", "pergunta": "Você se lembra de ter visto um anúncio do Mercado Livre nos últimos 7 dias?", "nExp": 208, "nCtrl": 401, "head": {"r": "Sim", "lift_pp": 18.4, "lift_pct": 37.2}, "rows": [{"r": "Sim", "exp": 0.678, "ctrl": 0.494, "lift_pp": 18.4}, {"r": "Não", "exp": 0.154, "ctrl": 0.242, "lift_pp": -8.8}, {"r": "Não sei", "exp": 0.168, "ctrl": 0.264, "lift_pp": -9.6}]},
+    {"wave": "Jun/26", "type": "Favoritismo", "vert": "Evento", "camp": "Copa do Mundo", "code": "003/2026", "pergunta": "Sobre quais destes varejistas online você tem uma opinião positiva?", "nExp": 249, "nCtrl": 335, "head": {"r": "Mercado Livre", "lift_pp": 27.8, "lift_pct": 77.0}, "rows": [{"r": "Mercado Livre", "exp": 0.639, "ctrl": 0.361, "lift_pp": 27.8}, {"r": "Magazine Luiza", "exp": 0.06, "ctrl": 0.081, "lift_pp": -2.1}, {"r": "Shopee", "exp": 0.08, "ctrl": 0.188, "lift_pp": -10.8}, {"r": "Amazon", "exp": 0.116, "ctrl": 0.149, "lift_pp": -3.3}, {"r": "Nenhuma", "exp": 0.104, "ctrl": 0.221, "lift_pp": -11.7}]},
+    {"wave": "Jun/26", "type": "Intenção", "vert": "Evento", "camp": "Copa do Mundo", "code": "003/2026", "pergunta": "Qual é a probabilidade de você considerar Mercado Livre na próxima vez que quiser comprar online?", "nExp": 206, "nCtrl": 326, "head": {"r": "Muito provável", "lift_pp": 9.1, "lift_pct": 18.0}, "rows": [{"r": "Muito provável", "exp": 0.597, "ctrl": 0.506, "lift_pp": 9.1}, {"r": "Pouco provável", "exp": 0.097, "ctrl": 0.046, "lift_pp": 5.1}, {"r": "Neutro", "exp": 0.112, "ctrl": 0.178, "lift_pp": -6.6}, {"r": "Improvável", "exp": 0.087, "ctrl": 0.061, "lift_pp": 2.6}, {"r": "Muito improvável", "exp": 0.107, "ctrl": 0.209, "lift_pp": -10.2}]},
+    {"wave": "Jun/26", "type": "Awareness", "vert": "Data Dupla", "camp": "7.7", "code": "004/2026", "pergunta": "Você se lembra de ter visto um anúncio do Mercado Livre nos últimos 7 dias?", "nExp": 186, "nCtrl": 297, "head": {"r": "Sim", "lift_pp": 7.0, "lift_pct": 16.0}, "rows": [{"r": "Sim", "exp": 0.505, "ctrl": 0.435, "lift_pp": 7.0}, {"r": "Não", "exp": 0.266, "ctrl": 0.36, "lift_pp": -9.4}, {"r": "Não sei", "exp": 0.229, "ctrl": 0.204, "lift_pp": 2.5}]},
+    {"wave": "Jun/26", "type": "Favoritismo", "vert": "Data Dupla", "camp": "7.7", "code": "004/2026", "pergunta": "Sobre quais destes varejistas online você tem uma opinião positiva?", "nExp": 263, "nCtrl": 255, "head": {"r": "Mercado Livre", "lift_pp": 6.2, "lift_pct": 18.0}, "rows": [{"r": "Mercado Livre", "exp": 0.411, "ctrl": 0.349, "lift_pp": 6.2}, {"r": "Magazine Luiza", "exp": 0.067, "ctrl": 0.082, "lift_pp": -1.5}, {"r": "Shopee", "exp": 0.209, "ctrl": 0.165, "lift_pp": 4.4}, {"r": "Amazon", "exp": 0.129, "ctrl": 0.18, "lift_pp": -5.1}, {"r": "Nenhuma", "exp": 0.184, "ctrl": 0.224, "lift_pp": -4.0}]},
+    {"wave": "Jun/26", "type": "Intenção", "vert": "Data Dupla", "camp": "7.7", "code": "004/2026", "pergunta": "Qual é a probabilidade de você considerar Mercado Livre na próxima vez que quiser comprar online?", "nExp": 189, "nCtrl": 248, "head": {"r": "Muito provável", "lift_pp": 6.7, "lift_pct": 18.0}, "rows": [{"r": "Muito provável", "exp": 0.448, "ctrl": 0.381, "lift_pp": 6.7}, {"r": "Pouco provável", "exp": 0.069, "ctrl": 0.074, "lift_pp": -0.5}, {"r": "Neutro", "exp": 0.177, "ctrl": 0.222, "lift_pp": -4.5}, {"r": "Improvável", "exp": 0.133, "ctrl": 0.116, "lift_pp": 1.7}, {"r": "Muito improvável", "exp": 0.173, "ctrl": 0.206, "lift_pp": -3.3}]},
+    {"wave": "Jul/26", "type": "Associação", "vert": "Data Dupla", "camp": "DDP + 8.8", "code": "005/2026", "pergunta": "Qual das marcas você mais associa com presente de Dia dos Pais?", "nExp": 178, "nCtrl": 371, "head": {"r": "Mercado Livre", "lift_pp": 4.5, "lift_pct": 16.7}, "rows": [{"r": "Mercado Livre", "exp": 0.315, "ctrl": 0.27, "lift_pp": 4.5}, {"r": "Magazine Luiza", "exp": 0.146, "ctrl": 0.146, "lift_pp": 0.0}, {"r": "Shopee", "exp": 0.186, "ctrl": 0.202, "lift_pp": -1.6}, {"r": "Amazon", "exp": 0.102, "ctrl": 0.101, "lift_pp": 0.1}, {"r": "Nenhuma", "exp": 0.251, "ctrl": 0.281, "lift_pp": -3.0}]},
+    {"wave": "Jul/26", "type": "Intenção", "vert": "Data Dupla", "camp": "DDP + 8.8", "code": "005/2026", "pergunta": "Qual a probabilidade de você comprar um presente de Dia dos Pais no Mercado Livre?", "nExp": 173, "nCtrl": 304, "head": {"r": "Muito provável + Provável", "lift_pp": 4.1, "lift_pct": 11.6}, "rows": [{"r": "Muito provável", "exp": 0.22, "ctrl": 0.224, "lift_pp": -0.4}, {"r": "Provável", "exp": 0.173, "ctrl": 0.128, "lift_pp": 4.5}, {"r": "Neutro", "exp": 0.116, "ctrl": 0.224, "lift_pp": -10.8}, {"r": "Improvável", "exp": 0.139, "ctrl": 0.171, "lift_pp": -3.2}, {"r": "Muito improvável", "exp": 0.353, "ctrl": 0.253, "lift_pp": 10.0}]},
+    {"wave": "Jul/26", "type": "Preferência", "vert": "Data Dupla", "camp": "DDP + 8.8", "code": "005/2026", "pergunta": "Sobre quais destes varejistas online você tem uma opinião positiva?", "nExp": 144, "nCtrl": 309, "head": {"r": "Mercado Livre", "lift_pp": 2.1, "lift_pct": 6.9}, "rows": [{"r": "Mercado Livre", "exp": 0.327, "ctrl": 0.306, "lift_pp": 2.1}, {"r": "Magazine Luiza", "exp": 0.126, "ctrl": 0.139, "lift_pp": -1.3}, {"r": "Shopee", "exp": 0.191, "ctrl": 0.25, "lift_pp": -5.9}, {"r": "Amazon", "exp": 0.12, "ctrl": 0.132, "lift_pp": -1.2}, {"r": "Nenhuma", "exp": 0.236, "ctrl": 0.174, "lift_pp": 6.2}]},
+    {"wave": "Ago/26", "type": "Preferência", "vert": "Data Comemorativa", "camp": "DDP Contextual", "code": "008/2026", "pergunta": "Das marcas abaixo, qual você prefere?", "nExp": 357, "nCtrl": 586, "head": {"r": "Mercado Livre", "lift_pp": 4.2, "lift_pct": 17.0}, "rows": [{"r": "Mercado Livre", "exp": 0.289, "ctrl": 0.247, "lift_pp": 4.2}, {"r": "Magazine Luiza", "exp": 0.112, "ctrl": 0.102, "lift_pp": 1.0}, {"r": "Shopee", "exp": 0.232, "ctrl": 0.266, "lift_pp": -3.4}, {"r": "Amazon", "exp": 0.09, "ctrl": 0.142, "lift_pp": -5.2}, {"r": "Nenhuma", "exp": 0.277, "ctrl": 0.242, "lift_pp": 3.5}]},
+    {"wave": "Ago/26", "type": "Intenção", "vert": "Data Comemorativa", "camp": "DDP Contextual", "code": "008/2026", "pergunta": "Qual a probabilidade de você comprar um presente de Dia dos Pais no Mercado Livre?", "nExp": 354, "nCtrl": 555, "head": {"r": "Muito provável", "lift_pp": 3.1, "lift_pct": 18.6}, "rows": [{"r": "Muito provável", "exp": 0.198, "ctrl": 0.167, "lift_pp": 3.1}, {"r": "Provável", "exp": 0.153, "ctrl": 0.172, "lift_pp": -1.9}, {"r": "Neutro", "exp": 0.207, "ctrl": 0.195, "lift_pp": 1.2}, {"r": "Improvável", "exp": 0.146, "ctrl": 0.201, "lift_pp": -5.5}, {"r": "Muito improvável", "exp": 0.295, "ctrl": 0.266, "lift_pp": 2.9}]},
+  ],
 
   /* materiais — pós-vendas, estudos e audience discovery.
      Cada item: {title, id} — id do Google Slides.
@@ -726,6 +744,10 @@ const DATA = {
      "Os campos Alcance (D-1) e Frequência (D-1) vêm em branco nesses quatro resumos. Os KPIs correspondentes simplesmente não aparecem no detalhe dessas campanhas, em vez de exibirem zero."],
     ["Features com entrega em vídeo","CTV · Downloaded Apps · OOH · Topics",
      "Cada resumo traz uma segunda tabela de audiências só para vídeo, com views completos e VTR. Quatro capabilities aparecem nas duas tabelas — o registro da feature funde display e vídeo em vez de empilhar, senão os cliques de display seriam contados duas vezes. O CTV existe apenas na tabela de vídeo (7.7 e Copa do Mundo), por isso não exibe impressões nem CTR."],
+    ["Ordem de exposto e controle varia entre pós-vendas","Brand-Lift",
+     "Nos gráficos de survey, a barra de cima é o grupo exposto em 7.7, Copa do Mundo e Same Day, mas é o grupo controle em DDP + 8.8 e DDP Contextual. Quem desfaz a ambiguidade é o lift impresso em cada pós-venda: para todas as 15 surveys, a atribuição adotada reproduz exatamente o lift publicado, tanto em pontos percentuais quanto em percentual, e os dois grupos somam 100%."],
+    ["Resposta que ancora o lift muda por pesquisa","Brand-Lift",
+     "Na maioria das surveys o lift é medido sobre uma única resposta (“Sim”, “Mercado Livre” ou “Muito provável”). Na Intenção do DDP + 8.8 o pós-venda ancora nos dois primeiros níveis somados (“Muito provável + Provável”) — é o que reproduz os +4,1 p.p e +11,6% publicados. O card exibe qual resposta ancora cada lift."],
     ["Blocos não ativados","RMN · Google Analytics · PDOOH",
      "Os três blocos vêm zerados em todos os resumos (e o RMN traz um período herdado do template, que não corresponde às campanhas). Nenhum deles é exibido no dashboard."],
   ],
@@ -1491,31 +1513,41 @@ function renderCreativeGrid(){
 /* ============================================================
    12. BRAND-LIFT
    ============================================================ */
-let blState = {wave:"all"};
+let blState = {camp:"all", tipo:"all"};
 let blChart = null;
+const blId = w => `${w.code}|${w.type}`;
+function blFiltradas(){
+  return DATA.brandlift.filter(w =>
+    (blState.camp==="all" || w.camp===blState.camp) &&
+    (blState.tipo==="all" || w.type===blState.tipo));
+}
 function buildBrandlift(){
   const BL = DATA.brandlift;
   const head = secHead({
     eyebrow:'05 · Percepção',
     title:'<b>Brand-Lift</b>',
-    sub:'Pesquisas de percepção conduzidas durante as campanhas. Cada onda compara um grupo <strong>exposto</strong> aos criativos HYPR com um <strong>grupo controle</strong> do mesmo público não impactado.'
+    sub:'Pesquisas de percepção conduzidas durante as campanhas. Cada survey compara um grupo <strong>exposto</strong> aos criativos HYPR com um <strong>grupo controle</strong> do mesmo público não impactado. Os lifts exibidos são os apurados no pós-venda de cada campanha.'
   });
   if(!BL.length){
     return head + emptyState('📈','Nenhuma onda de survey carregada',
-      'Para cada survey, precisamos do enunciado da pergunta, das opções de resposta, do percentual no grupo exposto e no controle e do n de cada grupo. O gráfico exposto × controle e os cards de lift são gerados a partir disso.');
+      'Para cada survey, precisamos do enunciado da pergunta, das opções de resposta, do percentual no grupo exposto e no controle e do n de cada grupo.');
   }
-  const wavePills = `<button class="pill act" data-bl="all">Todas as Surveys</button>` +
-    BL.map(w=>`<button class="pill" data-bl="${esc(w.code)}">${esc(w.wave)} · ${esc(String(w.camp).split(' · ')[0])}</button>`).join('');
+  const camps = [...new Set(BL.map(w=>w.camp))];
+  const tipos = [...new Set(BL.map(w=>w.type))];
+  const pills = (attr, vals, rot) =>
+    `<button class="pill${blState[attr]==='all'?' act':''}" data-blf="${attr}" data-blv="all">${rot}<span class="ct">${BL.length}</span></button>` +
+    vals.map(v=>`<button class="pill${blState[attr]===v?' act':''}" data-blf="${attr}" data-blv="${esc(v)}">${esc(v)}<span class="ct">${BL.filter(w=>w[attr==='camp'?'camp':'type']===v).length}</span></button>`).join('');
 
-  const cards = BL.map(w=>{
-    const head2 = w.rows.find(r=>r.r==="Sim"||r.r==="Muito provável") || w.rows[0];
-    const pos = head2.lift_pp >= 0;
+  const F = blFiltradas();
+  const cards = F.map(w=>{
+    const pos = w.head.lift_pp >= 0;
     return `<div class="blc reveal">
       <div class="blc-w">${esc(w.wave)} · ${esc(w.type)}</div>
       <div class="blc-camp">${esc(w.camp)}</div>
-      <div class="blc-v ${pos?'pos':'neg'} urb">${pos?'+':''}${head2.lift_pp.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})} pp</div>
-      <div class="blc-r">lift em “${esc(head2.r)}”</div>
-      <div style="display:flex;gap:10px;margin-top:8px">
+      ${w.pergunta?`<div class="blc-q">“${esc(w.pergunta)}”</div>`:''}
+      <div class="blc-v ${pos?'pos':'neg'} urb">${pos?'+':''}${w.head.lift_pp.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})} p.p</div>
+      <div class="blc-r">${pos?'+':''}${w.head.lift_pct.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})}% de lift em “${esc(w.head.r)}”</div>
+      <div style="display:flex;gap:10px;margin-top:10px">
         <div style="flex:1;background:var(--glass2);border-radius:9px;padding:7px 10px;text-align:center">
           <div class="urb" style="font-weight:800;font-size:16px;color:var(--ac)">${w.nExp}</div>
           <div class="filter-lbl">Exposto</div></div>
@@ -1523,15 +1555,16 @@ function buildBrandlift(){
           <div class="urb" style="font-weight:800;font-size:16px;color:var(--tm)">${w.nCtrl}</div>
           <div class="filter-lbl">Controle</div></div>
       </div></div>`;
-  }).join('');
+  }).join('') || `<div class="note">Nenhuma survey para esta combinação de filtros.</div>`;
 
   return head + `
+  <div class="filters" style="position:static;margin-bottom:20px">
+    <div class="filter-row"><span class="filter-lbl">Campanha</span><div class="pills">${pills('camp', camps, 'Todas')}</div></div>
+    <div class="filter-row"><span class="filter-lbl">Tipo de pesquisa</span><div class="pills">${pills('tipo', tipos, 'Todos')}</div></div>
+  </div>
   <div class="panel">
-    <div class="bl-controls">
-      <div class="bl-cg"><span class="filter-lbl">Survey</span><div class="pills" id="blPills">${wavePills}</div></div>
-    </div>
-    <div class="panel-h"><div><div class="panel-t" id="blTitle">Lift por resposta — todas as Surveys</div>
-      <div class="panel-st">Diferença percentual (exposto − controle), em pontos percentuais</div></div>
+    <div class="panel-h"><div><div class="panel-t" id="blTitle">Exposto × controle</div>
+      <div class="panel-st" id="blSub">Percentual de resposta em cada grupo</div></div>
       <div class="bl-legend">
         <div class="bl-leg"><span class="dot" style="background:#FFE600"></span>Exposto</div>
         <div class="bl-leg"><span class="dot" style="background:rgba(255,255,255,.3)"></span>Controle</div>
@@ -1539,25 +1572,42 @@ function buildBrandlift(){
     <div class="chartwrap"><canvas id="blCanvas"></canvas></div>
   </div>
   <div class="bl-cards">${cards}</div>
-  <div class="note" style="margin-top:24px"><strong>Metodologia:</strong> o brand-lift mede a diferença na taxa de resposta entre o grupo exposto e o controle. Valores positivos indicam ganho a favor do grupo exposto.</div>`;
+  <div class="note" style="margin-top:24px"><strong>Metodologia:</strong> o brand-lift compara a taxa de resposta do grupo exposto com a do grupo controle, do mesmo público. O valor em <strong>p.p.</strong> é a diferença absoluta entre os dois; o valor em <strong>%</strong> é o ganho relativo. Ambos são os apurados no pós-venda da campanha.</div>`;
 }
 function renderBLChart(){
   const canvas = document.getElementById("blCanvas");
-  if(!canvas || typeof Chart === "undefined" || !DATA.brandlift.length) return;
-  const BL = blState.wave==="all" ? DATA.brandlift : DATA.brandlift.filter(w=>w.code===blState.wave);
+  if(!canvas || !DATA.brandlift.length) return;
+  const BL = blFiltradas();
   if(!BL.length) return;
+  const titulo = document.getElementById("blTitle"), sub = document.getElementById("blSub");
   let labels=[], exp=[], ctrl=[];
-  const title = document.getElementById("blTitle");
   if(BL.length===1){
     const w = BL[0];
     w.rows.forEach(r=>{ labels.push(r.r); exp.push(+(r.exp*100).toFixed(1)); ctrl.push(+(r.ctrl*100).toFixed(1)); });
-    if(title) title.textContent = `${w.wave} · ${w.camp} — exposto vs. controle (% por resposta)`;
+    if(titulo) titulo.textContent = `${w.camp} · ${w.type}`;
+    if(sub) sub.textContent = w.pergunta ? `“${w.pergunta}”` : 'Percentual de resposta em cada grupo';
   } else {
+    /* várias surveys: mostra a resposta principal de cada uma */
     BL.forEach(w=>{
-      const h = w.rows.find(r=>r.r==="Sim"||r.r==="Muito provável") || w.rows[0];
-      labels.push(`${w.wave}\n${h.r}`); exp.push(+(h.exp*100).toFixed(1)); ctrl.push(+(h.ctrl*100).toFixed(1));
+      const alvos = w.head.r.split('+').map(x=>x.trim());
+      const somaExp  = w.rows.filter(r=>alvos.includes(r.r)).reduce((a,r)=>a+r.exp, 0);
+      const somaCtrl = w.rows.filter(r=>alvos.includes(r.r)).reduce((a,r)=>a+r.ctrl, 0);
+      labels.push(`${w.camp}\n${w.type}`);
+      exp.push(+(somaExp*100).toFixed(1)); ctrl.push(+(somaCtrl*100).toFixed(1));
     });
-    if(title) title.textContent = "Resposta positiva por onda — exposto vs. controle (%)";
+    if(titulo) titulo.textContent = "Resposta principal de cada survey";
+    if(sub) sub.textContent = "Percentual no grupo exposto vs. controle na resposta que ancora o lift";
+  }
+  /* o cabeçalho já foi atualizado acima: se o Chart.js não carregar (CDN
+     bloqueado ou lento), o painel ainda descreve corretamente o recorte
+     selecionado, e os cards abaixo seguem trazendo todos os números */
+  if(typeof Chart === "undefined"){
+    const w = canvas.parentElement;
+    if(w && !w.querySelector('.bl-semchart')){
+      w.style.height = 'auto';        /* senão sobra a moldura vazia de 360px */
+      w.innerHTML = `<div class="note bl-semchart" style="margin:0">O gráfico depende de uma biblioteca externa que não carregou. Os percentuais de cada resposta continuam nos cards abaixo.</div>`;
+    }
+    return;
   }
   if(blChart) blChart.destroy();
   blChart = new Chart(canvas.getContext("2d"), {
@@ -1719,11 +1769,11 @@ document.addEventListener("click", e=>{
 
 /* ondas de brand-lift */
 document.addEventListener("click", e=>{
-  const p = e.target.closest(".pill[data-bl]");
+  const p = e.target.closest(".pill[data-blf]");
   if(!p) return;
-  blState.wave = p.dataset.bl;
-  document.getElementById("blPills").querySelectorAll(".pill").forEach(x=>x.classList.remove("act"));
-  p.classList.add("act");
+  blState[p.dataset.blf] = p.dataset.blv;
+  document.getElementById("brandlift-body").innerHTML = buildBrandlift();
+  initReveal();
   renderBLChart();
 });
 
