@@ -516,7 +516,7 @@ table.dt tr.tot td.l{color:var(--ac)}
    ============================================================ */
 const CFG = {
   cliente: "Mercado Livre",
-  periodo: "2026",
+  periodo: "Fev–Ago 2026",
   /* rótulo do eixo de agrupamento (campo `vert` de cada flight) */
   vertLabel: "Tipo de ativação",
   /* rótulo da chave única do flight — no Mercado Livre é o nº do PI */
@@ -560,16 +560,11 @@ const DATA = {
        impr        ← "Impressões Visíveis Entregues" (sempre viewable)
        ctr/cpc     ← guardados sem arredondar; a exibição arredonda    */
   flights: [
-    {
-      vert:"Data Comemorativa", camp:"Dia do Consumidor", mes:"Março",
-      periodo:"23/02–15/03/2026", code:"001/2026",
-      budget:100154.88, custo_ef:100154.88, custo_over:130012.50,
-      cpm_neg:14.40, cpm_ef:11.09, rentab:0.2297,
-      impr:9028646, clicks:71814, ctr:0.0079540, cpc:1.3946,
-      impr_neg:6955200, pacing:1.2981, alcance:2253493, frequencia:4.01,
-      atualizado:"15/03/2026",
-      video:false, creativeCamp:"Dia do Consumidor",
-    },
+    {vert:"Data Comemorativa", camp:"Dia do Consumidor", mes:"Fevereiro", periodo:"23/02–15/03/2026", code:"001/2026", budget:100154.88, custo_ef:100154.88, custo_over:130012.5, cpm_neg:14.4, cpm_ef:11.09, rentab:0.2297, impr:9028646, clicks:71814, ctr:0.00795402, cpc:1.39464283, impr_neg:6955200, pacing:1.2981, atualizado:"15/03/2026", video:false, creativeCamp:"Dia do Consumidor", alcance:2253493, frequencia:4.01},
+    {vert:"Territórios", camp:"Same Day", mes:"Junho", periodo:"16/06–21/06/2026", code:"002/2026", budget:99999.99, custo_ef:99999.99, custo_over:133864.98, cpm_neg:14.4, cpm_ef:10.76, rentab:0.253, impr:9296179, clicks:109181, ctr:0.01174472, cpc:0.91591019, impr_neg:6944444, pacing:1.1155, atualizado:"22/06/2026", video:true, creativeCamp:"Same Day", alcance:1718348, frequencia:5.41, v_budget:100000.08, v_cpcv_neg:0.36, v_cpcv_ef:0.24988713, v_views:400181, v_startviews:482490, v_clicks:489, v_vtr:0.82940786, v_rentab_cpcv:0.30586909, v_exposure:3335, v_custo_over:144065},
+    {vert:"Evento", camp:"Copa do Mundo", mes:"Junho", periodo:"16/06–05/07/2026", code:"003/2026", budget:150000, custo_ef:150000, custo_over:271268.34, cpm_neg:14.4, cpm_ef:7.96, rentab:0.447, impr:18838079, clicks:254266, ctr:0.01349745, cpc:0.58993338, impr_neg:10416667, pacing:1.8085, atualizado:"04/07/2026", video:true, creativeCamp:"Copa do Mundo", v_budget:150000.12, v_cpcv_neg:0.36, v_cpcv_ef:0.16125248, v_views:930219, v_startviews:1014602, v_clicks:639, v_vtr:0.91683143, v_rentab_cpcv:0.55207645, v_exposure:7752, v_custo_over:334878.8},
+    {vert:"Data Dupla", camp:"7.7", mes:"Junho", periodo:"26/06–07/07/2026", code:"004/2026", budget:150000, custo_ef:150000, custo_over:266223.8, cpm_neg:14.4, cpm_ef:8.11, rentab:0.4366, impr:18487764, clicks:224756, ctr:0.01215701, cpc:0.66739041, impr_neg:10416667, pacing:1.7748, atualizado:"28/06/2026", video:true, creativeCamp:"7.7", v_budget:150000.12, v_cpcv_neg:0.36, v_cpcv_ef:0.14856748, v_views:1009643, v_startviews:1082183, v_clicks:409, v_vtr:0.93296882, v_rentab_cpcv:0.58731255, v_exposure:8414, v_custo_over:363471.6},
+    {vert:"Data Comemorativa", camp:"DDP Contextual", mes:"Agosto", periodo:"04/08–09/08/2026", code:"008/2026", budget:200000, custo_ef:200000, custo_over:287587.54, cpm_neg:14.4, cpm_ef:10.01, rentab:0.3046, impr:19971357, clicks:203719, ctr:0.01020056, cpc:0.98174446, impr_neg:13888889, pacing:1.1061, atualizado:"10/08/2026", video:true, creativeCamp:"DDP Contextual", v_budget:74999.88, v_cpcv_neg:0.36, v_cpcv_ef:0.09520905, v_views:787739, v_startviews:851882, v_clicks:910, v_vtr:0.92470436, v_rentab_cpcv:0.73553042, v_exposure:6564, v_custo_over:283586.08},
   ],
 
   /* features[] — capabilities HYPR ativadas em cada flight.
@@ -579,12 +574,18 @@ const DATA = {
      segmentos que também são capability aparecem aqui e em audiences[]
      sem dupla contagem.                                              */
   features: [
-    {feat:"Downloaded Apps", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
-     vi:290330, clicks:5556, ctr:0.019136, plays:null,
-     obs:"CTR 2,4× a média da campanha (0,80%)."},
-    {feat:"Attention Ad", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
-     vi:124117, clicks:2575, ctr:0.020746, plays:null,
-     obs:"Melhor CTR da campanha: 2,07%."},
+    {feat:"Attention Ad", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:124117, clicks:2575, ctr:0.0207, plays:null, obs:""},
+    {feat:"Downloaded Apps", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:290330, clicks:5556, ctr:0.0191, plays:null, obs:""},
+    {feat:"Downloaded Apps", vert:"Territórios", camp:"Same Day", code:"002/2026", vi:1415391, clicks:19240, ctr:0.0136, plays:null, obs:""},
+    {feat:"Downloaded Apps", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:1638652, clicks:29734, ctr:0.0181, plays:null, obs:""},
+    {feat:"OOH", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:9758906, clicks:137990, ctr:0.0141, plays:null, obs:""},
+    {feat:"Topics", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:1131587, clicks:20948, ctr:0.0185, plays:null, obs:""},
+    {feat:"Downloaded Apps", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:826761, clicks:21903, ctr:0.0265, plays:null, obs:""},
+    {feat:"OOH", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:9463815, clicks:95103, ctr:0.01, plays:null, obs:""},
+    {feat:"Topics Concorrentes", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:274410, clicks:6164, ctr:0.0225, plays:null, obs:""},
+    {feat:"Tap-to-Cube", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:2686518, clicks:11044, ctr:0.0041, plays:null, obs:""},
+    {feat:"Downloaded Apps", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:3330551, clicks:15674, ctr:0.0047, plays:null, obs:""},
+    {feat:"Tap-to-Carousel", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:2219571, clicks:4526, ctr:0.002, plays:null, obs:""},
   ],
 
   /* audiences[] — segmentos entregues (bloco AUDIENCES do resumo).
@@ -592,23 +593,46 @@ const DATA = {
      No resumo do ML os segmentos particionam a entrega: a soma de vi
      e de custo_ef fecha exatamente com o total de display.           */
   audiences: [
-    {aud:"Tech", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
-     vi:2032586, clicks:13337, ctr:0.006562, custo_ef:22547.50, vtr:null, obs:""},
-    {aud:"Upgraders", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
-     vi:1928538, clicks:12925, ctr:0.006702, custo_ef:21393.30, vtr:null, obs:""},
-    {aud:"Beauty & Wellness", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
-     vi:1903219, clicks:13047, ctr:0.006855, custo_ef:21112.43, vtr:null, obs:""},
-    {aud:"Promo Seekers", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
-     vi:1861037, clicks:13162, ctr:0.007073, custo_ef:20644.51, vtr:null, obs:""},
-    {aud:"Magalu", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
-     vi:888819, clicks:11212, ctr:0.012614, custo_ef:9859.68, vtr:null,
-     obs:"Segmento de conquista — CTR 1,26%, acima da média da campanha."},
-    {aud:"Downloaded Apps", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
-     vi:290330, clicks:5556, ctr:0.019136, custo_ef:3220.63, vtr:null,
-     obs:"Também contabilizado como feature HYPR."},
-    {aud:"Attention Ad", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
-     vi:124117, clicks:2575, ctr:0.020746, custo_ef:1376.83, vtr:null,
-     obs:"Também contabilizado como feature HYPR."},
+    {aud:"Attention Ad", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:124117, clicks:2575, ctr:0.0207, custo_ef:1376.83, obs:""},
+    {aud:"Beauty & Wellness", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:1903219, clicks:13047, ctr:0.0069, custo_ef:21112.43, obs:""},
+    {aud:"Downloaded Apps", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:290330, clicks:5556, ctr:0.0191, custo_ef:3220.63, obs:""},
+    {aud:"Magalu", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:888819, clicks:11212, ctr:0.0126, custo_ef:9859.68, obs:""},
+    {aud:"Promo Seekers", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:1861037, clicks:13162, ctr:0.0071, custo_ef:20644.51, obs:""},
+    {aud:"Tech", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:2032586, clicks:13337, ctr:0.0066, custo_ef:22547.5, obs:""},
+    {aud:"Upgraders", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026", vi:1928538, clicks:12925, ctr:0.0067, custo_ef:21393.3, obs:""},
+    {aud:"Beauty", vert:"Territórios", camp:"Same Day", code:"002/2026", vi:1820466, clicks:19483, ctr:0.0107, vtr:0.8241, obs:""},
+    {aud:"Centros de compras", vert:"Territórios", camp:"Same Day", code:"002/2026", vi:574782, clicks:12111, ctr:0.0211, obs:""},
+    {aud:"Consumer Electronics", vert:"Territórios", camp:"Same Day", code:"002/2026", vi:1770038, clicks:18702, ctr:0.0106, vtr:0.8229, obs:""},
+    {aud:"Downloaded Apps", vert:"Territórios", camp:"Same Day", code:"002/2026", vi:1415391, clicks:19240, ctr:0.0136, vtr:0.9, obs:""},
+    {aud:"Fashion", vert:"Territórios", camp:"Same Day", code:"002/2026", vi:1842557, clicks:19679, ctr:0.0107, vtr:0.8176, obs:""},
+    {aud:"Fitness", vert:"Territórios", camp:"Same Day", code:"002/2026", vi:1872945, clicks:19966, ctr:0.0107, vtr:0.8059, obs:""},
+    {aud:"Downloaded Apps", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:1638652, clicks:29734, ctr:0.0181, obs:""},
+    {aud:"Esportes", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:248997, clicks:2998, ctr:0.012, obs:""},
+    {aud:"OOH", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:9758906, clicks:137990, ctr:0.0141, obs:""},
+    {aud:"Sports Events", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:3022718, clicks:30865, ctr:0.0102, obs:""},
+    {aud:"Topics", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:1131587, clicks:20948, ctr:0.0185, obs:""},
+    {aud:"Torcedores", vert:"Evento", camp:"Copa do Mundo", code:"003/2026", vi:3037219, clicks:31731, ctr:0.0104, obs:""},
+    {aud:"Caçadores de ofertas", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:1332558, clicks:22817, ctr:0.0171, obs:""},
+    {aud:"Downloaded Apps", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:826761, clicks:21903, ctr:0.0265, obs:""},
+    {aud:"Eletrodomésticos", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:1289555, clicks:15830, ctr:0.0123, obs:""},
+    {aud:"Higiene & Beleza", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:1335992, clicks:16062, ctr:0.012, obs:""},
+    {aud:"Home Appliance", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:1316866, clicks:15260, ctr:0.0116, obs:""},
+    {aud:"Moda & Estilo", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:1340587, clicks:16366, ctr:0.0122, obs:""},
+    {aud:"OOH", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:9463815, clicks:95103, ctr:0.01, obs:""},
+    {aud:"Tecnologia", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:1307220, clicks:15251, ctr:0.0117, obs:""},
+    {aud:"Topics Concorrentes", vert:"Data Dupla", camp:"7.7", code:"004/2026", vi:274410, clicks:6164, ctr:0.0225, obs:""},
+    {aud:"DDP", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1318530, clicks:23595, ctr:0.0179, estrategia:"Contextual", obs:""},
+    {aud:"Eletrônicos", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1293244, clicks:22050, ctr:0.0171, estrategia:"Contextual", obs:""},
+    {aud:"Esportes", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1287288, clicks:22825, ctr:0.0177, estrategia:"Contextual", obs:""},
+    {aud:"Moda", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1217562, clicks:21123, ctr:0.0173, estrategia:"Contextual", obs:""},
+    {aud:"Perfumaria", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1283658, clicks:22554, ctr:0.0176, estrategia:"Contextual", obs:""},
+    {aud:"Tap-to-Cube", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:2686518, clicks:11044, ctr:0.0041, estrategia:"Contextual", obs:""},
+    {aud:"Downloaded Apps", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:3330551, clicks:15674, ctr:0.0047, estrategia:"Downloaded Apps", obs:""},
+    {aud:"Eletrônicos", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1424357, clicks:15485, ctr:0.0109, estrategia:"O2O", obs:""},
+    {aud:"Esportes", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1309594, clicks:15426, ctr:0.0118, estrategia:"O2O", obs:""},
+    {aud:"Moda", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1305705, clicks:14803, ctr:0.0113, estrategia:"O2O", obs:""},
+    {aud:"Perfumaria", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:1294779, clicks:14614, ctr:0.0113, estrategia:"O2O", obs:""},
+    {aud:"Tap-to-Carousel", vert:"Data Comemorativa", camp:"DDP Contextual", code:"008/2026", vi:2219571, clicks:4526, ctr:0.002, estrategia:"O2O", obs:""},
   ],
 
   /* creatives[] — peças veiculadas.
@@ -624,7 +648,14 @@ const DATA = {
      Cada item: {title, id} — id do Google Slides.
      V1: seção pronta e vazia, conforme combinado.                   */
   materiais: [
-    {id:'pos',      label:'Pós-Vendas',         ic:'📋', items:[]},
+    {id:'pos', label:'Pós-Vendas', ic:'📋', items:[
+      {title:'DDP Contextual — Ago/26',    id:'17tSqSCAZvhA94qQ5wlkYhr8vIZc6soIn', kind:'pdf'},
+      {title:'DDP + 8.8 — Jul/26',         id:'1d9tKjzubz6TYS-yUITSmlj6n2a079YOA', kind:'pdf'},
+      {title:'7.7 — Jun/26',               id:'1EkNsEexkPSV7WPXo71hHHM-UUKzlAdhj', kind:'pdf'},
+      {title:'Copa do Mundo — Jun/26',     id:'1CbXFE5d9DYLp1FBx3eISBwQY0aRTpWz9', kind:'pdf'},
+      {title:'Same Day — Jun/26',          id:'1fICoZuPlxwYm8JNJlo5qSw6OtoHPmrpK', kind:'pdf'},
+      {title:'Dia do Consumidor — Mar/26', id:'1aVP7NRPrrLuUK3BV3eCGEn-0TNW05QoN', kind:'pdf'},
+    ]},
     {id:'estudos',  label:'Estudos',            ic:'🔬', items:[]},
     {id:'audience', label:'Audience Discovery', ic:'🎯', items:[]},
   ],
@@ -639,10 +670,16 @@ const DATA = {
   inconsistencias: [
     ["Vídeo ativado sem entrega","Dia do Consumidor",
      "O resumo traz o bloco VIDEO PERFORMANCE preenchido com zeros (budget, views e start views = 0) e as taxas derivadas saem inválidas — VTR aparece como #DIV/0! e a rentabilidade do CPCV como 100%. O flight foi marcado como display-only e nenhum desses números entra no consolidado."],
-    ["Segmento que também é feature","Downloaded Apps · Attention Ad",
-     "No resumo do ML os dois aparecem dentro do bloco AUDIENCES, junto com os segmentos de categoria — a soma das audiências fecha exatamente com a entrega total. Mantivemos os dois em Audiências para preservar essa partição e os repetimos em Features, que é recorte da entrega e não soma ao portfólio. Não há dupla contagem."],
+    ["Segmento que também é feature","Downloaded Apps · OOH · Topics · Attention Ad · Tap-to-Cube · Tap-to-Carousel",
+     "No resumo do ML, as capabilities e formatos da HYPR aparecem dentro do bloco AUDIENCES, junto com os segmentos de categoria — e a soma das audiências fecha exatamente com a entrega total de cada campanha. Mantivemos todos em Audiências para preservar essa partição e repetimos as capabilities em Features, que é recorte da entrega e não soma ao portfólio. Não há dupla contagem."],
+    ["Audiências agrupadas por estratégia","DDP Contextual",
+     "É a única campanha em que o bloco AUDIENCES vem dividido em três estratégias (Contextual, Downloaded Apps e O2O), com subtotais próprios. Os mesmos segmentos — Eletrônicos, Esportes, Moda e Perfumaria — aparecem em duas estratégias diferentes, por isso o card e a tabela exibem a estratégia junto do nome. Somados, os três blocos fecham nas 19.971.357 impressões da campanha."],
+    ["Colunas de audiência variam por relatório","Dia do Consumidor · Same Day",
+     "O quinto campo do bloco AUDIENCES muda de significado entre os resumos: em Dia do Consumidor é o custo efetivo por segmento, em Same Day é a VTR, e nas demais campanhas vem vazio. O dashboard só exibe a coluna quando o dado existe."],
+    ["Alcance e frequência ausentes","7.7 · Copa do Mundo · DDP Contextual",
+     "Os campos Alcance (D-1) e Frequência (D-1) vêm em branco nesses três resumos. Os KPIs correspondentes simplesmente não aparecem no detalhe dessas campanhas, em vez de exibirem zero."],
     ["Blocos não ativados","RMN · Google Analytics · PDOOH",
-     "Os três blocos vêm zerados no resumo (e o RMN traz um período de 01–31/08/2025, herdado do template, que não corresponde à campanha). Nenhum deles é exibido no dashboard."],
+     "Os três blocos vêm zerados em todos os resumos (e o RMN traz um período herdado do template, que não corresponde às campanhas). Nenhum deles é exibido no dashboard."],
   ],
 };
 
@@ -792,7 +829,7 @@ function renderHub(){
   document.getElementById('tb-hypr').src = BRAND.hypr;
 
   document.getElementById('hub-eyebrow').textContent = `${CFG.cliente} × HYPR · ${CFG.periodo}`;
-  document.getElementById('hub-title').innerHTML = 'HYPR + MeLi <em>em modo Full</em>';
+  document.getElementById('hub-title').innerHTML = 'HYPR + MeLi em <em>modo Full</em>';
   document.getElementById('hub-sub').textContent = F.length
     ? `${plural([...new Set(F.map(f=>f.camp))].length,'campanha','campanhas')}, ${plural(F.length,'flight','flights')} e ${fmtMi(TOT.impr)} de impressões entregues. Este é o panorama vivo do que o ${CFG.cliente} construiu com a HYPR — explore os números, os criativos e o impacto de marca.`
     : `Estrutura pronta para receber as campanhas do ${CFG.cliente}. Cada seção abaixo já existe e passa a exibir os números assim que os dados de cada flight forem carregados.`;
@@ -1088,7 +1125,9 @@ function firstCreativeFor(creativeCamp){
   return pref ? pref.src : null;
 }
 function coverInitials(name){
-  return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('');
+  const s = String(name||'').trim();
+  if(s.length <= 4) return s;   /* nomes curtos como "7.7" e "8.8" cabem inteiros */
+  return s.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('');
 }
 function buildCampBox(f){
   const cover = firstCreativeFor(f.creativeCamp);
@@ -1165,8 +1204,13 @@ function buildFlightDetail(code){
   if(f.alcance!=null)    kpis.push({l:"Alcance (D-1)", v:fmtMi(f.alcance), blue:1});
   if(f.frequencia!=null) kpis.push({l:"Frequência (D-1)", v:f.frequencia.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}), blue:1});
   if(f.video){
+    kpis.push({l:"Budget de vídeo", v:fmtBRL(f.v_budget), imp:1});
     kpis.push({l:"Views completos (vídeo)", v:fmtInt(f.v_views), imp:1});
     kpis.push({l:"VTR (vídeo)", v:fmtPct(f.v_vtr)});
+    kpis.push({l:"CPCV efetivo", v:fmtBRL(f.v_cpcv_ef)});
+    if(f.v_rentab_cpcv!=null)
+      kpis.push({l:"Rentabilidade CPCV", v:fmtPct(f.v_rentab_cpcv,2),
+                 s:`vs. ${fmtBRL(f.v_cpcv_neg)} contratado`});
   }
   const kg = kpis.map((k,i)=>`<div class="kcard reveal ${k.imp?'imp':''}${k.blue?' blue':''}" style="transition-delay:${i*40}ms">
     <div class="kc-l">${k.l}</div><div class="kc-v urb">${k.v}</div>
@@ -1236,7 +1280,7 @@ function audTable(A){
     <thead><tr><th class="l">Audiência</th><th>${CFG.codeLabel}</th><th>Impressões</th><th>Cliques</th><th>CTR</th>
       ${temCusto?'<th>Custo efetivo</th>':''}${temVtr?'<th>VTR</th>':''}</tr></thead>
     <tbody>${A.map(a=>`<tr>
-      <td class="l"><b>${esc(a.aud)}</b><span class="cell-vert">${esc(a.camp||'')}</span></td>
+      <td class="l"><b>${esc(a.aud)}</b><span class="cell-vert">${esc(a.camp||'')}${a.estrategia?` · ${esc(a.estrategia)}`:''}</span></td>
       <td><span class="cell-code">${esc(String(a.code||'').split(' · ')[0])}</span></td>
       <td class="imp-col">${a.vi!=null?fmtInt(a.vi):dash()}</td>
       <td>${a.clicks!=null?fmtInt(a.clicks):dash()}</td>
@@ -1264,7 +1308,7 @@ function buildAudiencias(){
   const cards = [...filtered].sort((a,b)=>(Number(b.vi)||0)-(Number(a.vi)||0)).map((a,i)=>`
     <div class="audcard reveal" style="transition-delay:${i*40}ms">
       <div class="audcard-n">${esc(a.aud)}</div>
-      <div class="audcard-c">${esc(a.camp||'')}</div>
+      <div class="audcard-c">${esc(a.camp||'')}${a.estrategia?` · ${esc(a.estrategia)}`:''}</div>
       <div class="audbar"><span style="width:${((Number(a.vi)||0)/max*100).toFixed(1)}%"></span></div>
       <div class="audcard-row"><span class="k">Impressões</span><span class="v">${a.vi!=null?fmtInt(a.vi):'—'}</span></div>
       <div class="audcard-row"><span class="k">Cliques</span><span class="v">${a.clicks!=null?fmtInt(a.clicks):'—'}</span></div>
@@ -1482,8 +1526,12 @@ function renderMatGrid(){
   let items = [];
   cats.forEach(cat=>cat.items.forEach(item=>items.push({cat,item})));
   items.sort((a,b)=>matDateOrder(b.item.title)-matDateOrder(a.item.title));
-  grid.innerHTML = items.map(({cat,item})=>`
-    <div class="matcard reveal" data-mat-cat="${cat.id}">
+  grid.innerHTML = items.map(({cat,item})=>{
+    /* pós-venda em PDF abre pelo visualizador do Drive; Slides, pelo editor */
+    const pdf = item.kind === 'pdf';
+    const url = pdf ? `https://drive.google.com/file/d/${item.id}/view`
+                    : `https://docs.google.com/presentation/d/${item.id}/edit`;
+    return `<div class="matcard reveal" data-mat-cat="${cat.id}">
       <div class="matcard-thumb">
         <img src="https://drive.google.com/thumbnail?id=${item.id}&sz=w400" alt="${esc(item.title)}"
           onerror="this.style.display='none';this.parentElement.style.background='var(--glass2)'">
@@ -1491,9 +1539,10 @@ function renderMatGrid(){
       </div>
       <div class="matcard-body">
         <div class="matcard-t">${esc(item.title)}</div>
-        <a class="matcard-btn" href="https://docs.google.com/presentation/d/${item.id}/edit" target="_blank" rel="noopener">Abrir apresentação ↗</a>
+        <a class="matcard-btn" href="${url}" target="_blank" rel="noopener">${pdf?'Abrir PDF':'Abrir apresentação'} ↗</a>
       </div>
-    </div>`).join('') || `<div class="note">Nenhum material nesta categoria.</div>`;
+    </div>`;
+  }).join('') || `<div class="note">Nenhum material nesta categoria.</div>`;
   initReveal();
 }
 function buildMateriais(){

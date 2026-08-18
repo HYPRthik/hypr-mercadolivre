@@ -10,12 +10,17 @@ Nada é inventado: nenhum número aparece no dashboard sem estar no `DATA`.
 
 | Seção | Rota | Estado |
 |---|---|---|
-| Consolidado Geral | `consolidado` | 1 flight (Dia do Consumidor) |
-| Campanhas Ativadas | `campanhas` | 1 flight |
-| Audiências | `audiencias` | 7 segmentos |
+| Consolidado Geral | `consolidado` | 5 flights |
+| Campanhas Ativadas | `campanhas` | 5 flights |
+| Audiências | `audiencias` | 40 segmentos |
 | Central de Criativos | `criativos` | pronta · aguardando peças |
 | Brand-Lift | `brandlift` | pronta · aguardando surveys |
-| Hub de Materiais | `materiais` | pronta · aguardando pós-vendas |
+| Hub de Materiais | `materiais` | 6 pós-vendas (PDF no Drive) |
+
+Campanhas carregadas: Dia do Consumidor (PI 001/2026), Same Day (002), Copa do
+Mundo (003), 7.7 (004) e DDP Contextual (008). **Falta DDP + 8.8** — o resumo
+tem 6,5 MB e estoura o limite de transporte do MCP do Drive; precisa chegar
+como anexo direto.
 
 Sem gate de e-mail e sem telemetria nesta versão (decisão do cliente). Para
 religar, reintroduzir `#email-gate` + `initGate/submitGate` e um Apps Script
@@ -74,7 +79,19 @@ pacing            = impr / impr_neg
   então não há dupla contagem.
 - **Arredondamento.** Derivar a rentabilidade do CPM já arredondado em 2 casas
   dá 22,99% onde o resumo diz 22,97%. Guarde `custo_ef` e deixe o cálculo em
-  precisão cheia; só a exibição arredonda.
+  precisão cheia; só a exibição arredonda. Vale igual para o vídeo: o CPCV
+  efetivo publicado (R$ 0,25) leva a 30,56% onde o resumo diz 30,59% — derive
+  de `v_budget / v_views`.
+- **O bloco AUDIENCES muda de formato entre relatórios.** Três variações vistas:
+  uma coluna extra de *Custo Efetivo* (Dia do Consumidor), uma de *VTR*
+  (Same Day), ou uma coluna *Estratégia* à esquerda agrupando os segmentos em
+  blocos com subtotais (DDP Contextual — Contextual / Downloaded Apps / O2O).
+  No caso agrupado, o `Total geral` fica na coluna de Estratégia, não na de
+  Audiência; um parser que só procure na coluna de Audiência atravessa a tabela
+  e invade o bloco de performance diária.
+- **Tabelas extras não modeladas**, disponíveis se quiserem virar seção:
+  audiências de vídeo (7.7, Copa do Mundo, DDP Contextual), *Praça* com share
+  por região (Same Day), *Ad Size Performance* e *Daily Performance* (todas).
 
 ## Como preencher
 
