@@ -20,8 +20,8 @@ Nada é inventado: nenhum número aparece no dashboard sem estar no `DATA`.
 Todas as campanhas carregadas: Dia do Consumidor (PI 001/2026), Same Day (002),
 Copa do Mundo (003), 7.7 (004), DDP + 8.8 (005) e DDP Contextual (008).
 
-Falta só a **logo oficial do Mercado Livre** — `BRAND.logo` segue `null`, com um
-wordmark tipográfico provisório no lugar.
+Nada pendente: relatórios, pós-vendas, criativos e a logo oficial já estão no
+dashboard.
 
 ## Brand-Lift: como ler os pós-vendas
 
@@ -44,6 +44,14 @@ A resposta que ancora o lift muda: normalmente é uma só ("Sim", "Mercado Livre
 níveis ("Muito provável + Provável"). O campo `head` de cada survey guarda qual
 resposta ancora e os dois valores publicados, e é isso que o card exibe — o
 dashboard mostra o número do pós-venda, não um recálculo.
+
+**Survey também é feature.** Cada campanha com pesquisa tem um registro em
+`features[]` com `feat: "Survey"`, sem `vi`/`clicks` (não há impressão de
+survey) e com dois campos próprios: `surveys` (quantas ondas rodaram) e
+`lift_max` (o maior lift em p.p. entre elas). O card agregado soma `surveys`,
+tira o máximo de `lift_max` e leva para a seção Brand-Lift. Ao incluir uma
+campanha nova, gere esses dois campos a partir de `DATA.brandlift` em vez de
+digitá-los — assim eles não podem divergir dos cards de survey.
 
 Também vale para a extração: `pdfplumber` quebra alguns rótulos em caracteres
 soltos (o "6,9%" de "Pouco provável"), e nas páginas com duas pesquisas lado a
@@ -183,9 +191,24 @@ em vez de mostrar número derivado de premissa não confirmada.
 
 ### Marca
 
-`BRAND.logo` está `null` e o topo usa um wordmark tipográfico provisório.
-Assim que o arquivo oficial da logo chegar, basta preencher `BRAND.logo` com um
-`data:` URI — topbar e capa passam a usá-lo automaticamente.
+`BRAND.logo` carrega o lockup horizontal oficial como `data:` URI (o original
+está em `brand/Mercado-Livre-logo.png`, junto das outras versões enviadas).
+Topbar e capa consomem o mesmo campo; se ele for `null`, cai num wordmark
+tipográfico.
+
+O wordmark do ML é `#181878` sobre fundo transparente — ilegível no fundo
+`#08080F` do dashboard. Por isso a logo vai dentro de `.ml-chip`, um bloco
+branco arredondado. Trocar o arquivo por uma versão monocromática clara
+resolveria sem o chip, mas descaracterizaria a marca; o chip é o padrão do
+próprio ML em fundo escuro.
+
+Reduza a imagem antes de embutir (1200 px de largura basta para o uso em tela e
+mantém o `data:` URI em ~160 kB):
+
+```bash
+python3 -c "from PIL import Image; im=Image.open('brand/Mercado-Livre-logo.png'); \
+im.resize((1200,334), Image.LANCZOS).save('/tmp/logo.png', optimize=True)"
+```
 
 ## Criativos
 
