@@ -519,14 +519,14 @@ const CFG = {
   periodo: "2026",
   /* rótulo do eixo de agrupamento (campo `vert` de cada flight) */
   vertLabel: "Tipo de ativação",
-  /* CPM/CPCV negociados padrão — usados para derivar rentabilidade
-     consolidada. `null` = não exibir rentabilidade agregada.
-     TODO: confirmar os valores contratados do Mercado Livre.        */
-  cpmNegPadrao: null,
-  cpcvNegPadrao: null,
-  /* true  = budget de vídeo é SEPARADO do display (soma no investido)
-     false = vídeo já está dentro do budget geral (não somar)          */
-  videoBudgetSeparado: false,
+  /* rótulo da chave única do flight — no Mercado Livre é o nº do PI */
+  codeLabel: "PI",
+  /* CPM/CPCV negociados contratados — base da rentabilidade */
+  cpmNegPadrao: 14.40,
+  cpcvNegPadrao: 0.36,
+  /* Display e vídeo têm budgets separados no PI e a soma dos dois é o
+     "Total Investido" do resumo — por isso somam no investido do cliente */
+  videoBudgetSeparado: true,
 };
 
 /* Marca. Assim que o arquivo oficial da logo do Mercado Livre chegar,
@@ -545,19 +545,71 @@ const BRAND = {
    ============================================================ */
 const DATA = {
   /* flights[] — 1 objeto por entrega de campanha num período.
-     Campos: vert, camp, mes, periodo, code, budget, custo_over,
-     cpm_neg, cpm_ef, rentab, impr, clicks, ctr, cpc, video,
-     creativeCamp [, prelim, v_budget, v_views, v_startviews,
-     v_vtr, v_clicks, v_cpcv_neg, v_cpcv_ef]                        */
-  flights: [],
+     Campos: vert, camp, mes, periodo, code, budget, custo_ef,
+     custo_over, cpm_neg, cpm_ef, rentab, impr, clicks, ctr, cpc,
+     video, creativeCamp [, prelim, impr_neg, pacing, alcance,
+     frequencia, atualizado, v_budget, v_views, v_startviews,
+     v_vtr, v_clicks, v_cpcv_neg, v_cpcv_ef]
+
+     Origem dos campos no resumo de campanha:
+       budget      ← DISPLAY PERFORMANCE · "Budget Contratado"
+       custo_ef    ← MAIN RESULTS · "Custo Efetivo"
+       custo_over  ← OTHER METRICS · "Custo Efetivo + Over"
+                     (= impr × cpm_neg / 1000 — valor da entrega ao CPM
+                     contratado, NÃO é gasto do cliente)
+       impr        ← "Impressões Visíveis Entregues" (sempre viewable)
+       ctr/cpc     ← guardados sem arredondar; a exibição arredonda    */
+  flights: [
+    {
+      vert:"Data Comemorativa", camp:"Dia do Consumidor", mes:"Março",
+      periodo:"23/02–15/03/2026", code:"001/2026",
+      budget:100154.88, custo_ef:100154.88, custo_over:130012.50,
+      cpm_neg:14.40, cpm_ef:11.09, rentab:0.2297,
+      impr:9028646, clicks:71814, ctr:0.0079540, cpc:1.3946,
+      impr_neg:6955200, pacing:1.2981, alcance:2253493, frequencia:4.01,
+      atualizado:"15/03/2026",
+      video:false, creativeCamp:"Dia do Consumidor",
+    },
+  ],
 
   /* features[] — capabilities HYPR ativadas em cada flight.
-     Campos: feat, vert, camp, code, vi, clicks, ctr, plays, obs     */
-  features: [],
+     Campos: feat, vert, camp, code, vi, clicks, ctr, plays, obs
 
-  /* audiences[] — segmentos/categorias entregues (seção própria).
-     Campos: aud, vert, camp, code, vi, clicks, ctr, vtr, obs        */
-  audiences: [],
+     Recorte da entrega: NÃO somam ao total do portfólio. Por isso os
+     segmentos que também são capability aparecem aqui e em audiences[]
+     sem dupla contagem.                                              */
+  features: [
+    {feat:"Downloaded Apps", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
+     vi:290330, clicks:5556, ctr:0.019136, plays:null,
+     obs:"CTR 2,4× a média da campanha (0,80%)."},
+    {feat:"Attention Ad", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
+     vi:124117, clicks:2575, ctr:0.020746, plays:null,
+     obs:"Melhor CTR da campanha: 2,07%."},
+  ],
+
+  /* audiences[] — segmentos entregues (bloco AUDIENCES do resumo).
+     Campos: aud, vert, camp, code, vi, clicks, ctr, custo_ef, vtr, obs
+     No resumo do ML os segmentos particionam a entrega: a soma de vi
+     e de custo_ef fecha exatamente com o total de display.           */
+  audiences: [
+    {aud:"Tech", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
+     vi:2032586, clicks:13337, ctr:0.006562, custo_ef:22547.50, vtr:null, obs:""},
+    {aud:"Upgraders", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
+     vi:1928538, clicks:12925, ctr:0.006702, custo_ef:21393.30, vtr:null, obs:""},
+    {aud:"Beauty & Wellness", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
+     vi:1903219, clicks:13047, ctr:0.006855, custo_ef:21112.43, vtr:null, obs:""},
+    {aud:"Promo Seekers", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
+     vi:1861037, clicks:13162, ctr:0.007073, custo_ef:20644.51, vtr:null, obs:""},
+    {aud:"Magalu", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
+     vi:888819, clicks:11212, ctr:0.012614, custo_ef:9859.68, vtr:null,
+     obs:"Segmento de conquista — CTR 1,26%, acima da média da campanha."},
+    {aud:"Downloaded Apps", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
+     vi:290330, clicks:5556, ctr:0.019136, custo_ef:3220.63, vtr:null,
+     obs:"Também contabilizado como feature HYPR."},
+    {aud:"Attention Ad", vert:"Data Comemorativa", camp:"Dia do Consumidor", code:"001/2026",
+     vi:124117, clicks:2575, ctr:0.020746, custo_ef:1376.83, vtr:null,
+     obs:"Também contabilizado como feature HYPR."},
+  ],
 
   /* creatives[] — peças veiculadas.
      Campos: id, camp, vertical, code, type, size, size_label,
@@ -584,7 +636,14 @@ const DATA = {
   totals: {},
 
   /* notas de transparência exibidas no Consolidado */
-  inconsistencias: [],
+  inconsistencias: [
+    ["Vídeo ativado sem entrega","Dia do Consumidor",
+     "O resumo traz o bloco VIDEO PERFORMANCE preenchido com zeros (budget, views e start views = 0) e as taxas derivadas saem inválidas — VTR aparece como #DIV/0! e a rentabilidade do CPCV como 100%. O flight foi marcado como display-only e nenhum desses números entra no consolidado."],
+    ["Segmento que também é feature","Downloaded Apps · Attention Ad",
+     "No resumo do ML os dois aparecem dentro do bloco AUDIENCES, junto com os segmentos de categoria — a soma das audiências fecha exatamente com a entrega total. Mantivemos os dois em Audiências para preservar essa partição e os repetimos em Features, que é recorte da entrega e não soma ao portfólio. Não há dupla contagem."],
+    ["Blocos não ativados","RMN · Google Analytics · PDOOH",
+     "Os três blocos vêm zerados no resumo (e o RMN traz um período de 01–31/08/2025, herdado do template, que não corresponde à campanha). Nenhum deles é exibido no dashboard."],
+  ],
 };
 
 /* ============================================================
@@ -621,14 +680,21 @@ function computeTotals(){
     impr:       sum('impr'),
     clicks:     sum('clicks'),
   };
-  /* custo efetivo ponderado pela entrega */
-  const E = F.reduce((a,f)=>a + (Number(f.cpm_ef)||0) * (Number(f.impr)||0) / 1000, 0);
+  /* Custo efetivo do portfólio. Usa o valor informado no resumo quando
+     existe (`custo_ef`) — derivar de cpm_ef × impr introduz o erro do
+     arredondamento do CPM na 2ª casa. */
+  const custoEf = f => (f.custo_ef != null)
+    ? Number(f.custo_ef)
+    : (Number(f.cpm_ef)||0) * (Number(f.impr)||0) / 1000;
+  const E = F.reduce((a,f)=>a + custoEf(f), 0);
   t.custo_ef = E;
-  t.cpm_ef = t.impr ? +(E / t.impr * 1000).toFixed(2) : null;
-  t.ctr    = t.impr ? +(t.clicks / t.impr).toFixed(5) : null;
-  t.cpc    = t.clicks ? +(E / t.clicks).toFixed(3) : null;
+  /* precisão cheia aqui; só a exibição arredonda. Derivar a rentabilidade
+     do CPM já arredondado em 2 casas dava 22,99% onde o resumo diz 22,97% */
+  t.cpm_ef = t.impr ? E / t.impr * 1000 : null;
+  t.ctr    = t.impr ? t.clicks / t.impr : null;
+  t.cpc    = t.clicks ? E / t.clicks : null;
   t.rentab = (CFG.cpmNegPadrao && t.cpm_ef!=null)
-    ? +((CFG.cpmNegPadrao - t.cpm_ef) / CFG.cpmNegPadrao).toFixed(4) : null;
+    ? (CFG.cpmNegPadrao - t.cpm_ef) / CFG.cpmNegPadrao : null;
 
   const V = F.filter(f=>f.video);
   if(V.length){
@@ -636,12 +702,13 @@ function computeTotals(){
     t.v_views   = V.reduce((a,f)=>a + (Number(f.v_views)||0), 0);
     t.v_clicks  = V.reduce((a,f)=>a + (Number(f.v_clicks)||0), 0);
     t.v_budget  = V.reduce((a,f)=>a + (Number(f.v_budget)||0), 0);
-    t.v_vtr     = sv ? +(t.v_views / sv).toFixed(4) : null;
+    t.v_vtr     = sv ? t.v_views / sv : null;
+    /* CPCV consolidado ponderado por views completos */
     t.v_cpcv_ef = t.v_views
-      ? +(V.reduce((a,f)=>a + (Number(f.v_cpcv_ef)||0) * (Number(f.v_views)||0), 0) / t.v_views).toFixed(4)
+      ? V.reduce((a,f)=>a + (Number(f.v_cpcv_ef)||0) * (Number(f.v_views)||0), 0) / t.v_views
       : null;
     t.rentab_cpcv = (CFG.cpcvNegPadrao && t.v_cpcv_ef!=null)
-      ? +((CFG.cpcvNegPadrao - t.v_cpcv_ef) / CFG.cpcvNegPadrao).toFixed(4) : null;
+      ? (CFG.cpcvNegPadrao - t.v_cpcv_ef) / CFG.cpcvNegPadrao : null;
   }
   t.investido_cliente = t.budget + (CFG.videoBudgetSeparado ? (t.v_budget||0) : 0);
 
@@ -725,9 +792,7 @@ function renderHub(){
   document.getElementById('tb-hypr').src = BRAND.hypr;
 
   document.getElementById('hub-eyebrow').textContent = `${CFG.cliente} × HYPR · ${CFG.periodo}`;
-  document.getElementById('hub-title').innerHTML = F.length
-    ? 'Nossa história não cabe <em>em slides</em>'
-    : 'A parceria começa <em>aqui</em>';
+  document.getElementById('hub-title').innerHTML = 'HYPR + MeLi <em>em modo Full</em>';
   document.getElementById('hub-sub').textContent = F.length
     ? `${plural([...new Set(F.map(f=>f.camp))].length,'campanha','campanhas')}, ${plural(F.length,'flight','flights')} e ${fmtMi(TOT.impr)} de impressões entregues. Este é o panorama vivo do que o ${CFG.cliente} construiu com a HYPR — explore os números, os criativos e o impacto de marca.`
     : `Estrutura pronta para receber as campanhas do ${CFG.cliente}. Cada seção abaixo já existe e passa a exibir os números assim que os dados de cada flight forem carregados.`;
@@ -935,7 +1000,7 @@ function buildConsolidado(){
     {l:"CPC", v:fmtBRL(t.cpc)},
     {l:"CPM efetivo", v:fmtBRL(t.cpm_ef)},
   ];
-  if(t.rentab!=null) kpisDisplay.push({l:"Rentabilidade do CPM", v:fmtPct(t.rentab,1), s:`vs. CPM negociado de ${fmtBRL(CFG.cpmNegPadrao)}`});
+  if(t.rentab!=null) kpisDisplay.push({l:"Rentabilidade do CPM", v:fmtPct(t.rentab,2), s:`vs. CPM negociado de ${fmtBRL(CFG.cpmNegPadrao)}`});
 
   const kpisVideo = hasVideo ? [
     {l:"Views 100% em vídeo", v:fmtInt(t.v_views), imp:1},
@@ -944,7 +1009,7 @@ function buildConsolidado(){
     {l:"CPCV efetivo", v:fmtBRL(t.v_cpcv_ef)},
   ] : [];
   if(hasVideo && t.rentab_cpcv!=null)
-    kpisVideo.push({l:"Rentabilidade do CPCV", v:fmtPct(t.rentab_cpcv,1),
+    kpisVideo.push({l:"Rentabilidade do CPCV", v:fmtPct(t.rentab_cpcv,2),
       s:`CPCV efetivo ${fmtBRL(t.v_cpcv_ef)} vs. ${fmtBRL(CFG.cpcvNegPadrao)} contratado`});
 
   const renderKpis = arr => arr.map((k,i)=>`<div class="kcard reveal ${k.imp?'imp':''}" style="transition-delay:${i*45}ms">
@@ -959,32 +1024,36 @@ function buildConsolidado(){
       <td class="l"><b>${esc(f.camp)}</b>${f.prelim?' <span class="chip prelim">preliminar</span>':''}${f.video?' <span class="chip vid">+ vídeo</span>':''}
         <span class="cell-vert">${esc(f.vert)} · ${esc(f.mes)}</span></td>
       <td><span class="cell-code">${esc(f.code)}</span></td>
-      <td>${fmtBRL0(f.budget)}</td>
+      <td>${fmtBRL(f.budget)}</td>
       <td class="imp-col">${fmtInt(f.impr)}</td>
       <td>${fmtInt(f.clicks)}</td>
       <td>${fmtPct(f.ctr)}</td>
       <td>${fmtBRL(f.cpc)}</td>
       <td>${fmtBRL(f.cpm_ef)}</td>
-      <td>${f.rentab!=null?fmtPct(f.rentab,1):dash()}</td></tr>`).join('');
+      <td>${f.rentab!=null?fmtPct(f.rentab,2):dash()}</td></tr>`).join('');
   const totRow = `<tr class="tot">
       <td class="l">TOTAL — Portfólio (${plural(F.length,'flight','flights')})</td>
       <td><span class="cell-code">—</span></td>
-      <td>${fmtBRL0(t.budget)}</td><td>${fmtInt(t.impr)}</td><td>${fmtInt(t.clicks)}</td>
+      <td>${fmtBRL(t.budget)}</td><td>${fmtInt(t.impr)}</td><td>${fmtInt(t.clicks)}</td>
       <td>${fmtPct(t.ctr)}</td><td>${fmtBRL(t.cpc)}</td><td>${fmtBRL(t.cpm_ef)}</td>
-      <td>${t.rentab!=null?fmtPct(t.rentab,1):dash()}</td></tr>`;
+      <td>${t.rentab!=null?fmtPct(t.rentab,2):dash()}</td></tr>`;
 
-  return head + kg + `
+  /* a linha do tempo só comunica com 2+ flights; com um só vira um ponto
+     solto no meio de uma régua vazia */
+  const timeline = F.length > 1 ? `
   <div class="panel reveal">
     <div class="panel-h"><div><div class="panel-t">Desempenho por flight</div>
       <div class="panel-st">Linha do tempo da jornada ${CFG.cliente} × HYPR</div></div></div>
     ${buildTimeline(F)}
-  </div>
+  </div>` : '';
+
+  return head + kg + timeline + `
 
   <div class="panel reveal">
     <div class="panel-h"><div><div class="panel-t">Tabela geral</div>
       <div class="panel-st">Um flight por linha · totais do portfólio no rodapé</div></div></div>
     <div class="tbl-wrap"><table class="dt">
-      <thead><tr><th class="l">Campanha</th><th>Código</th><th>Budget</th><th>Impressões</th>
+      <thead><tr><th class="l">Campanha</th><th>${CFG.codeLabel}</th><th>Budget</th><th>Impressões</th>
         <th>Cliques</th><th>CTR</th><th>CPC</th><th>CPM ef.</th><th>Rentab.</th></tr></thead>
       <tbody>${rows}${totRow}</tbody></table></div>
   </div>
@@ -1069,7 +1138,7 @@ function buildCampanhasHub(){
   return head + `
   <div class="filters" style="position:static;margin-bottom:20px">
     <div class="filter-row"><span class="filter-lbl">${CFG.vertLabel}</span><div class="pills" id="vertPills">${vertPills}</div></div>
-    <div class="filter-row"><span class="filter-lbl">Mês de início</span><div class="pills" id="mesPills">${mesPills}</div></div>
+    <div class="filter-row"><span class="filter-lbl">Mês</span><div class="pills" id="mesPills">${mesPills}</div></div>
   </div>
   <div class="campgrid" id="campgrid">${F.map(buildCampBox).join('')}</div>`;
 }
@@ -1089,13 +1158,19 @@ function buildFlightDetail(code){
     {l:"CPM efetivo", v:fmtBRL(f.cpm_ef)},
     {l:"Budget contratado", v:fmtBRL0(f.budget), imp:1},
   ];
-  if(f.rentab!=null) kpis.push({l:"Rentabilidade CPM", v:fmtPct(f.rentab,1)});
+  if(f.rentab!=null) kpis.push({l:"Rentabilidade CPM", v:fmtPct(f.rentab,2)});
+  /* métricas de entrega do bloco OTHER METRICS do resumo */
+  if(f.pacing!=null)     kpis.push({l:"Pacing de entrega", v:fmtPct(f.pacing,1),
+                                    s: f.impr_neg!=null ? `${fmtMi(f.impr_neg)} negociadas` : ''});
+  if(f.alcance!=null)    kpis.push({l:"Alcance (D-1)", v:fmtMi(f.alcance), blue:1});
+  if(f.frequencia!=null) kpis.push({l:"Frequência (D-1)", v:f.frequencia.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}), blue:1});
   if(f.video){
     kpis.push({l:"Views completos (vídeo)", v:fmtInt(f.v_views), imp:1});
     kpis.push({l:"VTR (vídeo)", v:fmtPct(f.v_vtr)});
   }
-  const kg = kpis.map((k,i)=>`<div class="kcard reveal ${k.imp?'imp':''}" style="transition-delay:${i*40}ms">
-    <div class="kc-l">${k.l}</div><div class="kc-v urb">${k.v}</div></div>`).join('');
+  const kg = kpis.map((k,i)=>`<div class="kcard reveal ${k.imp?'imp':''}${k.blue?' blue':''}" style="transition-delay:${i*40}ms">
+    <div class="kc-l">${k.l}</div><div class="kc-v urb">${k.v}</div>
+    ${k.s?`<div class="kc-s">${k.s}</div>`:''}</div>`).join('');
 
   const featHtml = feats.length ? feats.map(ft=>{
     let rows = "";
@@ -1143,22 +1218,38 @@ function buildFlightDetail(code){
    ============================================================ */
 let audFilter = 'all';
 function audTable(A){
+  const temVtr   = A.some(a=>a.vtr!=null);
+  const temCusto = A.some(a=>a.custo_ef!=null);
+  const sum = k => A.reduce((s,a)=>s + (Number(a[k])||0), 0);
+  const tVi = sum('vi'), tClicks = sum('clicks'), tCusto = sum('custo_ef');
+  /* linha de total: os segmentos do resumo do ML particionam a entrega,
+     então o rodapé serve de conferência — deve fechar com o flight */
+  const totRow = A.length > 1 ? `<tr class="tot">
+      <td class="l">TOTAL — ${plural(A.length,'segmento','segmentos')}</td>
+      <td><span class="cell-code">—</span></td>
+      <td>${fmtInt(tVi)}</td>
+      <td>${fmtInt(tClicks)}</td>
+      <td>${tVi?fmtPct(tClicks/tVi):dash()}</td>
+      ${temCusto?`<td>${fmtBRL0(tCusto)}</td>`:''}
+      ${temVtr?`<td>${dash()}</td>`:''}</tr>` : '';
   return `<div class="tbl-wrap"><table class="dt">
-    <thead><tr><th class="l">Audiência</th><th>Código</th><th>Impressões</th><th>Cliques</th><th>CTR</th><th>VTR</th></tr></thead>
+    <thead><tr><th class="l">Audiência</th><th>${CFG.codeLabel}</th><th>Impressões</th><th>Cliques</th><th>CTR</th>
+      ${temCusto?'<th>Custo efetivo</th>':''}${temVtr?'<th>VTR</th>':''}</tr></thead>
     <tbody>${A.map(a=>`<tr>
       <td class="l"><b>${esc(a.aud)}</b><span class="cell-vert">${esc(a.camp||'')}</span></td>
       <td><span class="cell-code">${esc(String(a.code||'').split(' · ')[0])}</span></td>
       <td class="imp-col">${a.vi!=null?fmtInt(a.vi):dash()}</td>
       <td>${a.clicks!=null?fmtInt(a.clicks):dash()}</td>
       <td>${a.ctr!=null?fmtPct(a.ctr):dash()}</td>
-      <td>${a.vtr!=null?fmtPct(a.vtr):dash()}</td></tr>`).join('')}</tbody></table></div>`;
+      ${temCusto?`<td>${a.custo_ef!=null?fmtBRL0(a.custo_ef):dash()}</td>`:''}
+      ${temVtr?`<td>${a.vtr!=null?fmtPct(a.vtr):dash()}</td>`:''}</tr>`).join('')}${totRow}</tbody></table></div>`;
 }
 function buildAudiencias(){
   const A = DATA.audiences;
   const head = secHead({
     eyebrow:'03 · Segmentação',
     title:'<b>Audiências</b>',
-    sub:`Desempenho por segmento e categoria nas campanhas do ${CFG.cliente}. As capabilities da HYPR (Downloaded Apps, Topics, Tap-to-Map, PDOOH…) ficam em Features — aqui entram os públicos entregues.`
+    sub:`Desempenho por segmento nas campanhas do ${CFG.cliente}. Os segmentos do resumo <strong>particionam a entrega</strong> — a soma fecha exatamente com o total de display, por isso a tabela tem linha de total. Os que também são capability da HYPR aparecem em Features, que é recorte da entrega e não soma ao portfólio.`
   });
   if(!A.length){
     return head + emptyState('👥','Nenhuma audiência carregada',
