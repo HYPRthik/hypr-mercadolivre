@@ -12,7 +12,7 @@ Nada é inventado: nenhum número aparece no dashboard sem estar no `DATA`.
 |---|---|---|
 | Consolidado Geral | `consolidado` | 6 flights |
 | Campanhas Ativadas | `campanhas` | 6 flights |
-| Audiências | `audiencias` | 47 segmentos |
+| Audiências | `audiencias` | 47 segmentos em 10 categorias |
 | Central de Criativos | `criativos` | 21 peças (15 estáticas + 6 vídeos) |
 | Brand-Lift | `brandlift` | 15 surveys |
 | Hub de Materiais | `materiais` | 6 pós-vendas (PDF no Drive) |
@@ -22,6 +22,27 @@ Copa do Mundo (003), 7.7 (004), DDP + 8.8 (005) e DDP Contextual (008).
 
 Nada pendente: relatórios, pós-vendas, criativos e a logo oficial já estão no
 dashboard.
+
+## Consolidado: as três visões da tabela geral
+
+O budget de display sozinho não é o que o cliente investiu — no PI o vídeo
+tem budget próprio, e o `Total Investido` do resumo é a soma dos dois. Por
+isso a tabela geral tem um alternador (`tabView`, em `consTable()`):
+
+| Visão | Colunas | Para quê |
+|---|---|---|
+| **Total** (padrão) | Budget total · Display · Vídeo · Impressões · Views 100% · Cliques | Quanto entrou em cada campanha e o que saiu de entrega |
+| Display | Budget display · Impressões · Cliques · CTR · CPC · CPM ef. · Rentab. | Performance de display |
+| Vídeo | Budget vídeo · Views 100% · Cliques · VTR · CPCV ef. · Rentab. CPCV | Performance de vídeo |
+
+Cada visão fecha em si mesma: as taxas de display derivam do budget de
+display e as de vídeo do de vídeo. Um CPM calculado sobre budget somado não
+reconcilia com nada — foi por isso que a coluna virou três visões em vez de
+uma coluna só com a soma. O alternador só aparece se algum flight tiver
+`video: true`; sem vídeo a tabela cai direto na visão Display.
+
+O `budgetTotal(f)` respeita `CFG.videoBudgetSeparado`: se o vídeo não tiver
+budget próprio no PI, a soma não acontece.
 
 ## Brand-Lift: como ler os pós-vendas
 
@@ -136,6 +157,57 @@ pacing            = impr / impr_neg
   *Praça* com share por região (Same Day), *Ad Size Performance* e
   *Daily Performance* (todas as campanhas).
 
+## Audiências: categorias e ativação no tempo
+
+O resumo do ML nomeia o mesmo público de um jeito diferente a cada campanha
+— `Home Appliance` e `Eletrodomésticos`, `Tech` e `Tecnologia`, `Beauty` e
+`Higiene & Beleza`. Lendo segmento por segmento não dá para ver que é o
+mesmo tema voltando, e é isso que a agregação por categoria resolve.
+
+O mapa fica em `AUD_CATS`, no `<script>`:
+
+```js
+{cat:"Casa & Eletrodomésticos", ic:"🏠", segs:["Home Appliance","Eletrodomésticos"]}
+```
+
+Duas regras:
+
+- **Capability não entra no mapa.** Segmento cujo nome bate com um
+  `features[].feat` cai automaticamente na categoria `Feature` — se o nome
+  fosse repetido em `AUD_CATS`, as duas listas divergiriam na primeira
+  campanha nova. É `audCatOf()` quem decide, nessa ordem.
+- **Segmento sem categoria cai em `Outros`.** A categoria existe como rede
+  de segurança e deve ficar vazia: se ela aparecer no dashboard, é um
+  segmento novo que falta mapear em `AUD_CATS`.
+
+Ao incluir uma campanha, confira que a agregação continua fechando — os
+segmentos particionam a entrega, então:
+
+```
+Σ categorias.vi     = Σ audiences.vi     = impressões de display do portfólio
+Σ categorias.clicks = Σ audiences.clicks
+```
+
+O card de cada categoria abre mostrando os segmentos que entram nela, com o
+mesmo segmento fundido entre campanhas (`Perfumaria` aparece duas vezes só
+no DDP Contextual, em Contextual e O2O). No card de `Feature` o que abre são
+as capabilities.
+
+A matriz **Ativação no tempo** cruza categoria × campanha na ordem
+cronológica de início do flight, lida do campo `periodo` por `flightStart()`
+— e não do campo `mes`, que agrupa Same Day, Copa do Mundo e 7.7 no mesmo
+"Junho". A intensidade da barra é relativa à maior célula da matriz inteira,
+não ao total da linha: o que interessa é comparar volume entre campanhas.
+
+⚠️ `flightStart()` lê o ano só do fim do período (`23/02–15/03/2026`).
+Nenhum flight atravessa a virada de ano até aqui; quando atravessar, o
+início vai precisar do ano próprio.
+
+A seção **Pontos de atenção & inconsistências** saiu do Consolidado a pedido
+do cliente. O `DATA.inconsistencias` continua no arquivo — é a memória de
+como cada resumo foi lido — e para religar basta um painel que percorra a
+lista.
+
 ## Como preencher
 
 Tudo sai de um lugar só: `const DATA = {...}` no `<script>` do `index.html`.
@@ -148,7 +220,7 @@ DATA.creatives  // peças veiculadas
 DATA.brandlift  // ondas de survey
 DATA.materiais  // pós-vendas, estudos, audience discovery (Google Slides)
 DATA.totals     // sobrescreve o consolidado calculado (deixe {} para derivar)
-DATA.inconsistencias // notas de transparência
+DATA.inconsistencias // notas de transparência (não exibidas nesta versão)
 ```
 
 O template de coleta (`TEMPLATEnovacampanha.xlsx`) mapeia 1:1 nos campos de
@@ -217,6 +289,29 @@ im.resize((1200,334), Image.LANCZOS).save('/tmp/logo.png', optimize=True)"
 | Imagem (JPG/PNG/GIF) | `data:` URI base64 no `DATA` |
 | Vídeo (MP4, H.264/AAC) | arquivo em `videos/` + caminho `/videos/x.mp4` |
 | Interativo | URL de **embed** em `<iframe>` |
+
+### Capa da campanha
+
+`firstCreativeFor()` escolhe a miniatura do card da campanha, e a caixa é
+horizontal (~2,3:1): uma peça em pé entra cortada numa tira central e não dá
+para reconhecer o criativo. A ordem de preferência é 970×250 → 728×90 →
+qualquer estática com proporção ≥ 1,6 → o resto.
+
+Campanha **só de vídeo** não tem estática nenhuma para oferecer. Para essas,
+o criativo de vídeo ganha um campo `cover`: um quadro já recortado na
+horizontal, separado do `poster` (que segue a proporção da peça e alimenta o
+player). Foi o que resolveu o Same Day, cujo vídeo é vertical — o `poster`
+entrava cortado no meio.
+
+Escolha o quadro pelo conteúdo, não pelo brilho: o mais claro de um vídeo do
+ML costuma ser o cartão final chapado, que tem 100% de amarelo e nenhuma
+informação. Um quadro com a marca visível **e** conteúdo é o que funciona em
+128 px de altura.
+
+```bash
+ffmpeg -ss 25 -i videos/ddp-8-8-3.mp4 -frames:v 1 \
+  -vf "crop=iw:iw/2.3,scale='min(920,iw)':-2" -q:v 5 cover.jpg
+```
 
 Vídeo novo: remuxe com faststart antes de commitar, senão o navegador precisa
 de uma requisição extra no fim do arquivo antes de conseguir tocar.
