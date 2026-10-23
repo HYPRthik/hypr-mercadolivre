@@ -10,18 +10,43 @@ Nada é inventado: nenhum número aparece no dashboard sem estar no `DATA`.
 
 | Seção | Rota | Estado |
 |---|---|---|
-| Consolidado Geral | `consolidado` | 6 flights |
-| Campanhas Ativadas | `campanhas` | 6 flights |
-| Audiências | `audiencias` | 47 segmentos em 10 categorias |
+| Consolidado Geral | `consolidado` | 8 flights |
+| Campanhas Ativadas | `campanhas` | 8 flights |
+| Audiências | `audiencias` | 74 segmentos em 11 categorias |
 | Central de Criativos | `criativos` | 21 peças (15 estáticas + 6 vídeos) |
-| Brand-Lift | `brandlift` | 15 surveys |
-| Hub de Materiais | `materiais` | 6 pós-vendas (PDF no Drive) |
+| Brand-Lift | `brandlift` | 20 surveys |
+| Hub de Materiais | `materiais` | 8 pós-vendas (PDF e Slides no Drive) |
 
 Todas as campanhas carregadas: Dia do Consumidor (PI 001/2026), Same Day (002),
-Copa do Mundo (003), 7.7 (004), DDP + 8.8 (005) e DDP Contextual (008).
+Copa do Mundo (003), 7.7 (004), DDP + 8.8 (005), DDP Contextual (008),
+Mulheres (009) e 9.9 OOH (010).
 
-Nada pendente: relatórios, pós-vendas, criativos e a logo oficial já estão no
-dashboard.
+Pendente só os criativos de Mulheres e 9.9 OOH — as duas campanhas entram com
+a capa tipográfica até as peças chegarem.
+
+### Variações que Mulheres e 9.9 OOH trouxeram
+
+- **O PI não é chave única.** O resumo de Mulheres veio com PI 008/2026, o
+  mesmo da DDP Contextual. O número correto é 009/2026 (confirmado pelo
+  cliente), mas o episódio mostra que um PI pode cobrir mais de um flight. Se
+  voltar a acontecer, `code` precisa de um desempate — ele é o que
+  `buildFlightDetail()` usa para achar a campanha e para casar as features.
+- **Audiência que não particiona a entrega.** No 9.9 o bloco AUDIENCES é por
+  roteiro de OOH (b.drops, eletromidia, JCDecaux, Movie Mídia, mude, VEX) e
+  soma 8,2 mi — 21% dos 38,6 mi entregues. Quem particiona é o bloco
+  VOLUMETRIAS ALVO, que não traz cliques. O detalhe do flight mostra um aviso
+  de **cobertura parcial** sempre que `Σ audiences.vi ≠ impr`, para a linha de
+  TOTAL não parecer erro de conta.
+- **O denominador do pacing muda.** No 9.9, `pacing` (370,89%) sai de
+  `impr / (impr_neg + bonificadas)`, não de `impr / impr_neg`. Guarde os dois
+  campos como publicados e não derive um do outro.
+- **Dois benchmarks de CTR circulam.** 0,70% é o benchmark geral da HYPR
+  (usado no pós-venda do 9.9) e 0,85% é o específico do Mercado Livre (usado
+  no da DDP Contextual e no de Mulheres). Nenhum dos dois está no `DATA` —
+  ao citar "+X% vs benchmark", diga qual dos dois.
+- **Roteiro de OOH é veículo, não público.** Os seis players do 9.9 têm
+  categoria própria em `AUD_CATS` (`Roteiros de OOH`) para não se misturarem
+  com os segmentos temáticos.
 
 ## Consolidado: as três visões da tabela geral
 
@@ -86,8 +111,11 @@ religar, reintroduzir `#email-gate` + `initGate/submitGate` e um Apps Script
 
 ## Como ler o resumo de campanha do ML
 
-O resumo é um export de Google Sheets. Mapeamento verificado contra
-`Dia do Consumidor` — todos os campos abaixo fecham na conferência.
+O resumo é um export de Google Sheets — pode chegar como `.xlsx` ou como
+HTML salvo da planilha; os dois trazem a mesma grade de ~168 linhas, e o HTML
+é só CSS inline em volta de uma `<table>`. Mapeamento verificado contra
+`Dia do Consumidor`, `Mulheres` e `9.9 OOH` — todos os campos abaixo fecham na
+conferência.
 
 | Bloco do resumo | Campo no `DATA` |
 |---|---|
