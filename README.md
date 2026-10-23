@@ -348,6 +348,13 @@ de rota **antes** dele.
 node validate.js   # Playwright + Chromium headless
 ```
 
+Não é preciso configurar caminho: o script resolve o módulo pelo node e deixa
+o Playwright achar o browser. O binário muda de lugar a cada atualização
+(`chromium-1194/chrome-linux` virou `chromium-1243/chrome-linux64` de um
+container para o outro), e era isso que fazia o script morrer com
+`executable doesn't exist`. Para apontar na mão, `PW=` e `CHROME=` continuam
+valendo.
+
 Sempre conferir: big numbers da capa · contagens dos filtros · capa de cada
 campanha nova · nº de criativos no detalhe · "N flights" no consolidado ·
 ausência de `pageerror` novo.

@@ -4,23 +4,65 @@
  *   node validate.js            → checa estrutura, navegação e erros de JS
  *   node validate.js --shots    → também grava screenshots em ./.shots/
  *
- * Requer Playwright + Chromium. Neste ambiente:
- *   PW=/opt/node22/lib/node_modules/playwright
- *   CHROME=/opt/pw-browsers/chromium-1194/chrome-linux/chrome
- * Ambos podem ser sobrescritos por variável de ambiente.
+ * Requer Playwright + Chromium, e não fixa o caminho de nenhum dos dois: o
+ * binário muda de lugar a cada atualização (chromium-1194/chrome-linux virou
+ * chromium-1243/chrome-linux64 de um container para o outro) e o script
+ * quebrava com "executable doesn't exist". O módulo é resolvido pelo node e o
+ * browser pelo próprio Playwright, via PLAYWRIGHT_BROWSERS_PATH.
+ *
+ * Para apontar manualmente:  PW=/caminho/do/modulo  CHROME=/caminho/do/chrome
  */
 const path = require("path");
 const fs = require("fs");
 
-const PW = process.env.PW || "/opt/node22/lib/node_modules/playwright";
-const CHROME = process.env.CHROME || "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
 const SHOTS = process.argv.includes("--shots");
-const { chromium } = require(PW);
+
+function carregaPlaywright(){
+  const tentativas = [process.env.PW, "playwright",
+                      "/opt/node22/lib/node_modules/playwright"].filter(Boolean);
+  const erros = [];
+  for(const p of tentativas){
+    try { return require(p); } catch(e){ erros.push(`  ${p}: ${e.code || e.message}`); }
+  }
+  console.error("Playwright não encontrado. Tentativas:\n" + erros.join("\n") +
+    "\nInstale com `npm i playwright` ou aponte PW=/caminho/do/modulo.");
+  process.exit(2);
+}
+const { chromium } = carregaPlaywright();
+
+/* rede de segurança: se o Playwright não resolver o browser (cache movido,
+   instalação parcial), procura o chromium de maior versão no diretório de
+   browsers — os dois layouts de pasta já vistos estão cobertos */
+function achaChromium(){
+  const raiz = process.env.PLAYWRIGHT_BROWSERS_PATH || "/opt/pw-browsers";
+  if(!fs.existsSync(raiz)) return null;
+  const dirs = fs.readdirSync(raiz)
+    .filter(d => /^chromium-\d+$/.test(d))
+    .sort((a,b) => Number(b.slice(9)) - Number(a.slice(9)));
+  for(const d of dirs){
+    for(const sub of ["chrome-linux64/chrome", "chrome-linux/chrome"]){
+      const exe = path.join(raiz, d, sub);
+      if(fs.existsSync(exe)) return exe;
+    }
+  }
+  return null;
+}
+
+async function abreBrowser(){
+  if(process.env.CHROME) return chromium.launch({ executablePath: process.env.CHROME });
+  try { return await chromium.launch(); }
+  catch(e){
+    const exe = achaChromium();
+    if(!exe) throw e;
+    console.log(`  (Playwright não resolveu o browser; usando ${exe})`);
+    return chromium.launch({ executablePath: exe });
+  }
+}
 
 const SECOES = ["consolidado", "campanhas", "audiencias", "criativos", "brandlift", "materiais"];
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: CHROME });
+  const browser = await abreBrowser();
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 
   const errs = [], consoleErrs = [];
